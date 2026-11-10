@@ -73,7 +73,14 @@ Lấy từ `results[*].result.failures` trong run JSON.
 
 | Case ID | Failure Type | Actual Tool Calls | What Failed | Fix |
 |---|---|---|---|---|
-|  |  |  |  |  |
+| R03_web_news_routing | wrong_arg_value | `lookup(query="AI news", topic="news", timeframe="day")` | Đúng tool, topic, timeframe nhưng tự thêm "news" vào query (expected `"AI"`) | tools.yaml: mô tả `query` chỉ ghi chủ đề, tính "tin tức" thể hiện qua `topic=news` |
+| R08_out_of_scope | out_of_scope | `send(text="Nguyên hàm của x^2 là ...")` | Câu toán ngoài phạm vi nhưng vẫn gọi tool, thậm chí gửi đáp án lên Telegram | Prompt: bỏ "luôn chọn một tool"; ngoài phạm vi → không gọi tool, từ chối |
+| R10_missing_handle | missing_info | `timeline(screenname="sama")` | Không biết tweet của ai nhưng đoán Sam Altman (đúng như prompt starter dặn) | Prompt: bỏ chỉ dẫn đoán; thiếu đối tượng → `clarify` |
+| R11_missing_url | missing_info | `fetch(url="https://example.com/article")` | Bịa URL thay vì hỏi | Prompt: thiếu URL → `clarify`, không bịa |
+| R12_confirm_before_send | wrong_boundary | `send(text="Bản tin này")` | Gửi ngay, không xác nhận | Prompt + tools.yaml: trước `send` phải `clarify(response_type="yes_no")` |
+| R13_parallel_web_and_tweets | wrong_arg_value | `lookup(query="AI news", timeframe="day")` + `social_search(query="AI")` | Gọi song song đúng, nhưng `lookup` thiếu `topic="news"` và query thêm "news" | tools.yaml: tin tức → `topic=news`, query chỉ chứa chủ đề |
+| R14_out_of_scope_coding | out_of_scope | `send(text="def fibonacci(n): ...")` | Yêu cầu viết code ngoài phạm vi nhưng vẫn gọi `send` | Như R08 |
+
 
 ### B3. Team Eval Cases
 
