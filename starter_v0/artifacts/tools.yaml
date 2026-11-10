@@ -35,7 +35,10 @@ tools:
       required: [screenname]
 
   - name: social_search
-    description: "Tìm trên mạng xã hội."
+    description: >-
+      Tìm bài đăng trên X/Twitter theo từ khóa hoặc chủ đề khi nguồn mạng xã hội
+      vẫn là lựa chọn gần nhất của người dùng. Khi người dùng chuyển sang tin tức
+      trên web, dùng lookup cho nguồn mới, kể cả khi lượt cuối chỉ nhắc lại chủ đề.
     parameters:
       type: object
       properties:
@@ -45,7 +48,12 @@ tools:
       required: [query]
 
   - name: lookup
-    description: "Tra cứu thông tin trên internet."
+    description: >-
+      Tra cứu thông tin trên web, gồm tin tức và nguồn báo chí. Dùng cho yêu cầu
+      tìm tin như "tin hôm nay" và cho yêu cầu tiếp nối sau khi người dùng chuyển
+      từ X/Twitter sang web. Nếu lượt cuối chỉ đổi hoặc nhắc lại chủ đề, giữ nguồn
+      web và khoảng thời gian còn hiệu lực từ các lượt trước. Với tin tức, đặt
+      topic=news, đưa chủ đề vào query và dùng timeframe=day cho "hôm nay".
     parameters:
       type: object
       properties:
