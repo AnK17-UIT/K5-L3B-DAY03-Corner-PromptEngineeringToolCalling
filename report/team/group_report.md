@@ -65,7 +65,7 @@ Lấy từ `starter_v0/artifacts/version_log.csv` và `starter_v0/runs/*.json`. 
 | v0 | baseline | Đo hành vi của starter trước khi tối ưu |  | 0.70 (14/20) | [Run v0](../../starter_v0/runs/v0_B_base_openrouter_20261110T175814995429.json) |
 | v1 | `system_prompt.md` | Gọi `clarify` khi thiếu tài khoản hoặc URL sẽ giúp R10 và R11 đạt. | 0.70 (14/20) | 0.90 (18/20) | [Run v1](../../starter_v0/runs/v1_B_base_openrouter_20261110T180445251879.json) |
 | v2 | `system_prompt.md` | Yêu cầu `clarify(response_type="yes_no")` trước khi gửi sẽ giúp R12 đạt. | 0.90 (18/20) | 0.90 (18/20) | [Run v2](../../starter_v0/runs/v2_B_base_openrouter_20261110T180925001898.json) |
-| v3 |  |  |  |  |  |
+| v3 | `system_prompt.md` | Tách xác nhận ý định khỏi duyệt nội dung sẽ giúp R12 hỏi `yes_no` trước. | 0.90 (18/20) | 0.85 (17/20) | [Run v3](../../starter_v0/runs/v3_B_base_openrouter_20261110T181244702942.json) |
 
 ### B2. Failure Analysis
 
@@ -85,6 +85,8 @@ Run `v0` qua OpenRouter với `openai/gpt-4o-mini` chấm đủ 20 ca và có 0 
 Đối chiếu với `v1`, R10 và R11 chuyển sang PASS nhờ gọi `clarify(response_type="text")`. R03, R08 và R13 cũng chuyển sang PASS trong lần chạy này. R12 vẫn gọi `send` trước khi hỏi xác nhận. M02 chuyển từ PASS sang FAIL vì gọi `social_search(query="robotics")` thay cho `lookup(query="robotics", topic="news", timeframe="day")`. Tỷ lệ ca nhiều lượt giảm từ 6/6 xuống 5/6.
 
 Ở `v2`, cả 18 ca từng PASS trong `v1` vẫn đạt. R12 chuyển từ `send` sang `clarify`, nhưng gửi `response_type="text"` để xin nội dung bản tin thay vì `yes_no` theo kỳ vọng. Điểm routing tăng từ 90% lên 95% trong khi điểm tổng giữ ở 90%. M02 vẫn chọn `social_search` cho yêu cầu tin robotics hôm nay.
+
+Ở `v3`, R12 gọi `clarify(response_type="yes_no")` và chuyển sang PASS. Run không gọi `send`. M02 tiếp tục chọn `social_search` cho tin robotics. Hai ca chuyển từ PASS sang FAIL so với `v2`: R01 hỏi lại handle của Sam Altman thay vì gọi `timeline(screenname="sama")`, còn M06 vẫn dùng `social_search` sau khi người dùng yêu cầu chuyển sang tìm tin trên web. Tỷ lệ đạt giảm từ 18/20 xuống 17/20, và số ca nhiều lượt đạt giảm từ 5/6 xuống 4/6.
 
 ### B3. Team Eval Cases
 
