@@ -63,7 +63,7 @@ Lấy từ `starter_v0/artifacts/version_log.csv` và `starter_v0/runs/*.json`. 
 | Version | Changed Artifact | Hypothesis | Metric Before | Metric After | Run File |
 |---|---|---|---:|---:|---|
 | v0 | baseline | Đo hành vi của starter trước khi tối ưu |  | 0.70 (14/20) | [Run v0](../../starter_v0/runs/v0_B_base_openrouter_20261110T175814995429.json) |
-| v1 |  |  |  |  |  |
+| v1 | `system_prompt.md` | Gọi `clarify` khi thiếu tài khoản hoặc URL sẽ giúp R10 và R11 đạt. | 0.70 (14/20) | 0.90 (18/20) | [Run v1](../../starter_v0/runs/v1_B_base_openrouter_20261110T180445251879.json) |
 | v2 |  |  |  |  |  |
 | v3 |  |  |  |  |  |
 
@@ -81,6 +81,8 @@ Run `v0` qua OpenRouter với `openai/gpt-4o-mini` chấm đủ 20 ca và có 0 
 | `R11_missing_url` | `missing_info` | `fetch(url="https://example.com/article")` | Tự điền URL thay vì hỏi người dùng. | Gọi `clarify(response_type="text")` để xin URL trước khi đọc. |
 | `R12_confirm_before_send` | `wrong_boundary` | `send(text="Bản tin này")` | Gọi `send` trước khi xác nhận. Tool trả `needs_confirmation`. | Hỏi bằng `clarify(response_type="yes_no")` và chỉ gọi `send` sau khi người dùng xác nhận nội dung. |
 | `R13_parallel_web_and_tweets` | `wrong_tool` | `lookup(query="AI news", timeframe="day", max_results=5)` và `social_search(query="AI", search_type="Latest", limit=5)` | Cả hai tool đều được gọi. `lookup` dùng sai `query` và thiếu `topic="news"`. | Tách từ khóa và bộ lọc tin tức cho nhánh web, giữ lời gọi tìm bài đăng riêng. |
+
+Đối chiếu với `v1`, R10 và R11 chuyển sang PASS nhờ gọi `clarify(response_type="text")`. R03, R08 và R13 cũng chuyển sang PASS trong lần chạy này. R12 vẫn gọi `send` trước khi hỏi xác nhận. M02 chuyển từ PASS sang FAIL vì gọi `social_search(query="robotics")` thay cho `lookup(query="robotics", topic="news", timeframe="day")`. Tỷ lệ ca nhiều lượt giảm từ 6/6 xuống 5/6.
 
 ### B3. Team Eval Cases
 
