@@ -143,3 +143,17 @@ tools:
         max_pages: {type: integer, default: 5, description: "Số trang"}
         max_chars: {type: integer, default: 8000, description: "Số ký tự"}
       required: [arxiv_url]
+
+  - name: dedupe_sources
+    description: >-
+      Loại URL trùng nhau khỏi danh sách nguồn đã có và giữ thứ tự xuất hiện
+      đầu tiên. Dùng khi người dùng yêu cầu lọc link trùng, kể cả URL có sẵn
+      trong các lượt trước. Dùng lookup để tìm nguồn và fetch để đọc nội dung URL.
+    parameters:
+      type: object
+      properties:
+        urls:
+          type: array
+          items: {type: string}
+          description: "Danh sách URL HTTP(S) nguyên văn, gồm cả các mục trùng để tool kiểm tra"
+      required: [urls]

@@ -13,7 +13,7 @@ from __future__ import annotations
 import pytest
 
 from conftest import FakeResponse  # noqa: F401  (you will need it)
-from tools import TOOL_FUNCTIONS  # noqa: F401
+from tools import TOOL_FUNCTIONS
 
 TODO = "TODO CP3 (student): implement this test"
 
@@ -110,13 +110,22 @@ def test_policy_instruction_like_lines_go_to_untrusted_text() -> None:
 #   2. bad / missing input from the model (empty string, wrong type, out-of-enum value)
 #   3. failure path (missing key, HTTP error, timeout) -> returns error dict, does not raise
 
-def test_my_new_tool_happy_path() -> None:
-    pytest.skip(TODO)
+def test_dedupe_sources_preserves_order_and_counts_duplicates() -> None:
+    first = "https://example.org/research"
+    second = "https://example.org/research?page=2"
+
+    result = TOOL_FUNCTIONS["dedupe_sources"](urls=[first, second, first])
+
+    assert result == {"urls": [first, second], "duplicate_count": 1}
 
 
-def test_my_new_tool_bad_input_from_model() -> None:
-    pytest.skip(TODO)
+def test_dedupe_sources_rejects_a_string_instead_of_a_list() -> None:
+    result = TOOL_FUNCTIONS["dedupe_sources"](urls="https://example.org/research")
+
+    assert result["error"] == "invalid_input"
 
 
-def test_my_new_tool_failure_returns_error_dict() -> None:
-    pytest.skip(TODO)
+def test_dedupe_sources_returns_error_for_malformed_url() -> None:
+    result = TOOL_FUNCTIONS["dedupe_sources"](urls=["https://[invalid"])
+
+    assert result == {"error": "invalid_url", "message": "urls[0] must be an HTTP(S) URL with a host."}

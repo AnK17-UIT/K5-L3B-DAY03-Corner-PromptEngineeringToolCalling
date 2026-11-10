@@ -120,11 +120,11 @@ Lấy từ `starter_v0/transcripts/*.transcript.json`.
 
 | Item | Evidence File | What Worked | Risk / Guardrail |
 |---|---|---|---|
-| Tool mới (`tools/<tên>/`) |  |  |  |
-| Unit test tool mới (≥ 3 test/tool) | `pytest` output (0 failed) |  |  |
+| `dedupe_sources` | [Hợp đồng tool](../../starter_v0/tools/dedupe_sources/TOOL.md), [mã Python](../../starter_v0/tools/dedupe_sources/tool.py) | Bỏ URL trùng và giữ thứ tự xuất hiện đầu tiên. | Xử lý tại chỗ, không đọc URL qua mạng. |
+| Unit test tool mới | [Ba test](../../starter_v0/tests/test_tools_todo.py) | `pytest` có 70 test đạt, 14 test TODO được bỏ qua và 0 lỗi. | Test chuỗi thay cho danh sách và URL sai cú pháp trả error dict. |
 | UI (lệnh chạy + link dùng thử) |  |  |  |
 
-Tool unit tests: số test đã viết, và một ví dụ lỗi mà unit test bắt được nhưng eval không bắt được.
+Ba unit test kiểm tra thứ tự và số URL trùng, đầu vào sai kiểu, và URL sai cú pháp. Ca URL thiếu dấu đóng ngoặc kiểm tra lỗi từ bộ phân tích URL được trả dưới dạng error dict. Eval routing chỉ kiểm tra model chọn đúng tool và tham số.
 
 ### B5. Bonus Evidence
 
