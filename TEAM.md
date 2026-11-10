@@ -11,10 +11,15 @@
 
 | STT | Họ tên | MSSV | Email | GitHub | Vai trò |
 | --: | ------ | ---- | ----- | ------ | ------- |
-|   1 |        |      |       |        |         |
+|   1 | Hà Lê Duy | 2A202603851 |       |        | Phụ trách phần kỹ thuật trên nhánh `haleduy` |
 |   2 |        |      |       |        |         |
 
 ## Cá nhân
+
+### Hà Lê Duy — 2A202603851
+
+- Phần việc phụ trách gồm các vòng đánh giá prompt, tool lọc URL, bộ eval nhóm và demo agent trên nhánh `haleduy`.
+- [Báo cáo cá nhân của Hà Lê Duy](report/team/2A202603851_HaLeDuy.md)
 
 Mỗi thành viên đồng thời tạo một báo cáo riêng trong `report/` theo dạng:
 

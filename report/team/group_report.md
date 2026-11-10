@@ -1,58 +1,59 @@
 # Báo cáo nhóm — Day 03 Research Agent Tool Eval
 
-> Báo cáo gồm 2 phần có hạn khác nhau:
-> - **Phần A (mục 2)** — giới thiệu agent, ngắn gọn 1 trang. **Xong trước Team showdown (16:30)** để team khác hiểu nhanh agent có tool gì, làm được gì. Có thể làm thêm poster `report/team/poster.html` hoặc `poster.svg`.
-> - **Phần B (mục 3–7)** — chi tiết và bằng chứng, dựa trên log thật. Hoàn thiện trước deadline nộp bài.
->
-> Mỗi bảng phải trỏ được tới file thật: run JSON, transcript, commit. Cách chấm xem [RUBRIC.md](../../RUBRIC.md).
+Phần A hướng dẫn dùng thử agent. Phần B ghi lại kết quả đánh giá, test và hội thoại live. [Rubric](../../RUBRIC.md)
 
 ## 1. Thông tin nhóm
 
-- Tên nhóm:
+- Tên nhóm: trưởng nhóm bổ sung trong [TEAM.md](../../TEAM.md).
 - Thành viên và phân công: xem [TEAM.md](../../TEAM.md)
-- Provider/model dùng cho v0–v3:
+- Provider và model: OpenRouter với `openai/gpt-4o-mini`.
 
 ## 2. Mục tiêu và cách tiếp cận — PHẦN A: Giới thiệu agent
 
 ### A1. Agent này làm được gì
 
-> 1–2 câu mô tả agent dùng để làm gì (cho team khác hiểu nhanh).
+Agent tìm tin web, bài đăng X và bài nghiên cứu arXiv, đọc URL, tra chính sách nội bộ và trình bày nguồn thành bản tin. Tool `dedupe_sources` lọc URL lặp từ danh sách nguồn đã có. Quy trình đăng Telegram yêu cầu duyệt nội dung trước khi gửi.
 
-Ví dụ: "Research agent: tìm tin theo từ khóa / theo tài khoản, đọc URL, tổng hợp thành digest, và gửi lên Telegram khi được xác nhận."
+**Cách chạy UI**
 
-**Cách chạy UI:**
+Từ thư mục gốc, cấu hình `starter_v0/.env` theo [hướng dẫn API](../../docs/TOOL-SETUP.md), rồi chạy trong PowerShell:
 
-> Lệnh chạy UI (ví dụ `streamlit run app.py`) và dependency đã thêm vào `starter_v0/requirements.txt`.
+```powershell
+cd starter_v0
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m streamlit run app.py --server.address 127.0.0.1
+```
 
-**Link dùng thử (deploy):**
-
-> Dán link public để team khác mở thử ngay. Cách deploy nhanh bằng Cloudflare Tunnel xem README. Nếu deploy Vercel/Streamlit Cloud thì dán link đó.
->
-> URL:
+Mở [UI tại localhost](http://127.0.0.1:8501). Nhóm mở link dùng thử cho người ngoài khi demo theo [hướng dẫn của lab](../../README.md#deploy-nhanh-để-team-khác-dùng-thử-khuyến-nghị-cloudflare-tunnel).
 
 ### A2. Tool agent có
 
-> Liệt kê các tool agent đang dùng (gồm tool mới nhóm tự thêm). Mỗi tool 1 dòng: tên + làm được gì.
-
 | Tên tool | Làm được gì | Tool mới nhóm thêm? |
 |---|---|---|
-| clarify | hỏi lại người dùng khi thiếu thông tin | không |
-|  |  |  |
-|  |  |  |
+| `clarify` | Hỏi thông tin còn thiếu hoặc xin xác nhận. | Không |
+| `timeline` | Lấy bài gần đây từ một tài khoản X. | Không |
+| `social_search` | Tìm bài đăng X theo chủ đề và thứ tự `Top` hoặc `Latest`. | Không |
+| `lookup` | Tìm thông tin hoặc tin tức trên web. | Không |
+| `fetch` | Đọc nội dung tại URL đã biết. | Không |
+| `format` | Trình bày các nguồn đã có thành bản tin Markdown. | Không |
+| `send` | Đăng nội dung đã được duyệt lên kênh Telegram đã cấu hình. | Không |
+| `policy` | Tra tài liệu chính sách nội bộ. | Không |
+| `papers` | Tìm bài nghiên cứu trên arXiv. | Không |
+| `paper_text` | Tải PDF arXiv và trích xuất văn bản. | Không |
+| `dedupe_sources` | Bỏ URL trùng và giữ thứ tự xuất hiện đầu tiên. | Có |
 
 ### A3. Câu hỏi mẫu để thử
 
-> 3–5 câu hỏi/yêu cầu mẫu để team khác tự thử agent ngay.
-
-1.
-2.
-3.
+1. Tìm hai tin web về pin thể rắn trong tuần này.
+2. Tra một mục trong chính sách nội bộ về trích dẫn nguồn.
+3. Tóm tắt một bài viết mà tôi chưa gửi URL. Sau khi agent hỏi lại, cung cấp `https://example.org/`.
+4. Lọc trùng trong danh sách `https://example.org/a`, `https://example.org/b`, `https://example.org/a`.
 
 ## 3. Giải pháp
 
-> Tóm tắt các thay đổi chính trong `starter_v0/artifacts/system_prompt.md` và `starter_v0/artifacts/tools.yaml`, và tool mới nhóm viết (tên, làm gì, khi nào agent nên gọi).
-
--
+- Prompt phân biệt thao tác đọc với hành động đăng, yêu cầu hỏi lại khi thiếu tài khoản hoặc URL và chọn tool theo nguồn hiện hành. [System prompt](../../starter_v0/artifacts/system_prompt.md)
+- Khai báo tool mô tả phạm vi của từng tool, quy ước tham số và điều kiện `confirmed=true` của `send`. [Khai báo YAML](../../starter_v0/artifacts/tools.yaml)
+- `dedupe_sources` xử lý danh sách URL đã có. `app.py` dùng chung vòng lặp chạy tool với CLI và giữ hội thoại riêng cho từng phiên Streamlit. [Tool mới](../../starter_v0/tools/dedupe_sources/TOOL.md) · [UI](../../starter_v0/app.py)
 
 ## 4. Kết quả — PHẦN B: Chi tiết và bằng chứng
 
@@ -119,11 +120,15 @@ Run nhóm `v7-cp3` đạt 10/10 với 0 lỗi provider. Bộ dữ liệu có 5 c
 
 ### B4. Live Chat Evidence
 
-Lấy từ `starter_v0/transcripts/*.transcript.json`.
+Phiên `v7-cp3+p73375dfef6dd+t5193d4feb298` có 5 lượt với OpenRouter. Phiên thử dừng ở câu hỏi xác nhận Telegram. [Transcript JSON](../../starter_v0/transcripts/v7-cp3_openrouter_20261110T184221721545.transcript.json)
 
 | Turn | User Request | Tool Calls | Version Evidence | Outcome |
 |---|---|---|---|---|
-|  |  |  |  |  |
+| 1 | Tra một mục chính sách trích dẫn nội bộ. | `policy` với `source_citation` | `v7-cp3` | Agent gọi đúng kho và báo không tìm thấy mục khớp. |
+| 2 | Tóm tắt bài viết chưa có URL. | Không có | `v7-cp3` | Agent hỏi URL bằng câu trả lời trực tiếp. |
+| 3 | Cung cấp `https://example.org/`. | `fetch` | `v7-cp3` | Agent đọc trang và mô tả nội dung. |
+| 4 | Lọc URL trùng và giữ thứ tự. | `dedupe_sources` | `v7-cp3` | Trả hai URL theo thứ tự ban đầu, loại một mục trùng. |
+| 5 | Yêu cầu đăng thông báo lên Telegram. | `clarify` với `yes_no` | `v7-cp3` | Agent chờ xác nhận. Phiên kết thúc tại đây. |
 
 ### B5a. Required Evidence — Tool mới, unit test, UI
 
@@ -131,66 +136,29 @@ Lấy từ `starter_v0/transcripts/*.transcript.json`.
 |---|---|---|---|
 | `dedupe_sources` | [Hợp đồng tool](../../starter_v0/tools/dedupe_sources/TOOL.md), [mã Python](../../starter_v0/tools/dedupe_sources/tool.py) | Bỏ URL trùng và giữ thứ tự xuất hiện đầu tiên. | Xử lý tại chỗ, không đọc URL qua mạng. |
 | Unit test tool mới | [Ba test](../../starter_v0/tests/test_tools_todo.py) | `pytest` có 70 test đạt, 14 test TODO được bỏ qua và 0 lỗi. | Test chuỗi thay cho danh sách và URL sai cú pháp trả error dict. |
-| UI (lệnh chạy + link dùng thử) |  |  |  |
+| UI | [Mã Streamlit](../../starter_v0/app.py) · [Localhost](http://127.0.0.1:8501) | Trang và health endpoint trả HTTP 200. AppTest kiểm tra lọc URL qua OpenRouter, mở hội thoại mới và hiển thị lỗi provider. | Lịch sử giữ riêng theo phiên. UI hiển thị loại lỗi thay vì in phản hồi lỗi thô của provider. |
 
 Ba unit test kiểm tra thứ tự và số URL trùng, đầu vào sai kiểu, và URL sai cú pháp. Ca URL thiếu dấu đóng ngoặc kiểm tra lỗi từ bộ phân tích URL được trả dưới dạng error dict. Eval routing chỉ kiểm tra model chọn đúng tool và tham số.
 
-### B5. Bonus Evidence
-
-Chỉ điền nếu nhóm làm bonus (ghi riêng, tối đa 10 điểm). Tool có sẵn (`send`, `policy`, `papers`, `paper_text`) không tự được bonus.
-
-| Bonus | Evidence File | What Worked | Risk / Guardrail |
-|---|---|---|---|
-| Small Local Model | xem B7 |  |  |
-| Hơn 3 tool mới (≥ 4) |  |  |  |
-| `send` gửi thật lên Telegram sau xác nhận | transcript |  |  |
-| Test challenge (0 skipped / regression test) | `pytest` output |  |  |
-
-Test challenge: số bug tìm được trong tool có sẵn (nếu có), cách sửa, và test regression tương ứng.
-
-### B7. Small Local Model Challenge (bonus)
-
-Chỉ điền nếu nhóm làm bonus này.
-
-| Version | Model (provider) | Prompt/Tools | case_accuracy | tool_routing | argument | multiturn | Run File |
-|---|---|---|---|---|---|---|---|
-| v3 | (cloud) | v3 |  |  |  |  |  |
-| v3-<model> | (ollama) | v3 |  |  |  |  |  |
-| v3-<model> | (ollama) | v3 |  |  |  |  |  |
-| v4-local |  |  |  |  |  |  |  |
-| v5-local |  |  |  |  |  |  |  |
-
-Lỗi đặc thù của model nhỏ (đếm từ run JSON):
-
-| Failure Pattern | Count | Example Case | Fix Tried | Helped? |
-|---|---|---|---|---|
-| wrong / hallucinated tool |  |  |  |  |
-| invalid JSON args (`_invalid_json_arguments`) |  |  |  |  |
-| no tool call / answered directly |  |  |  |  |
-| missed `clarify` |  |  |  |  |
-| repeated / unnecessary calls |  |  |  |  |
-
-- Cái gì giúp model nhỏ gọi tool đúng hơn nhất? Bằng chứng?
-- Bản prompt tối ưu cho local chạy trên model cloud thì sao?
-- Khi nào nhóm sẽ chọn model local thay vì cloud cho agent này?
-
 ## 5. Khó khăn và cách xử lý
 
-> Khó khăn chính và cách nhóm xử lý. Nếu gặp lỗi kỹ thuật (provider lỗi, hết quota API, tool không chạy), mô tả lỗi và dẫn bằng chứng: run JSON, log, ảnh chụp.
-
--
+- Chạy script bằng Python hệ thống thiếu thư viện `openai`. Dùng Python trong `.venv` cho các run có số liệu trong B1.
+- Khi người dùng thay đổi nguồn giữa các lượt, model đôi khi giữ cả nguồn cũ. `v7` được chốt ở 19/20 với lỗi gọi thừa tool tại M06. Run nhóm kiểm tra chiều đổi ngược, từ web sang X, ở G08. [Run base](../../starter_v0/runs/v7_B_base_openrouter_20261110T183204024791.json) · [Run nhóm](../../starter_v0/runs/v7-cp3_B_group_openrouter_20261110T183908965916.json)
+- Tra chính sách bằng cụm từ tiếng Việt ở lượt live đầu tiên gọi đúng `policy` nhưng trả rỗng. Đọc kết quả tool cùng câu trả lời để phân biệt chất lượng truy xuất và routing. [Transcript](../../starter_v0/transcripts/v7-cp3_openrouter_20261110T184221721545.transcript.json)
 
 ## 6. Tổng hợp đóng góp
 
-Chi tiết đóng góp của từng thành viên nằm trong [TEAM.md](../../TEAM.md) và các báo cáo cá nhân `report/team/MSSV_HoTen.md`.
+Hà Lê Duy phụ trách phần kỹ thuật trên nhánh `haleduy`. Trưởng nhóm bổ sung tên nhóm, phân công các thành viên khác và thông tin nhánh nộp. [Thông tin nhóm](../../TEAM.md) · [Báo cáo cá nhân](2A202603851_HaLeDuy.md)
 
 ## 7. Hạn chế và hướng cải thiện — B6. Reflection
 
-- Fix nào thuộc `system_prompt.md`?
-- Fix nào thuộc `tools.yaml`?
-- Failure nào cần review thủ công thay vì chấm tự động?
-- Nếu có thêm một vòng, nhóm sẽ thử giả thuyết nào?
+- `system_prompt.md` xử lý phạm vi nghiên cứu, ngữ cảnh nhiều lượt, dữ liệu còn thiếu và thứ tự xin duyệt khi đăng.
+- `tools.yaml` mô tả điều kiện chọn từng tool và cách điền tham số như `response_type`, `topic`, `timeframe` và `confirmed`.
+- Các ca `no_tool` cần đọc câu trả lời thực tế để xác nhận agent đã từ chối. Tool chạy thành công cũng cần được kiểm tra riêng, vì eval routing chủ yếu so sánh tên tool và args.
+- Nếu mở rộng bộ kiểm tra, thêm các ca đổi nguồn theo cả hai chiều và kiểm tra câu trả lời cuối từ tool thật. Đây là hai hành vi mà run hiện tại cho thấy cần thêm bằng chứng.
 
 ## 8. Tài liệu tham khảo
 
--
+- [README của lab](../../README.md)
+- [Tài liệu chat Streamlit](https://docs.streamlit.io/develop/api-reference/chat)
+- [Streamlit AppTest](https://docs.streamlit.io/develop/api-reference/app-testing/st.testing.v1.apptest)
