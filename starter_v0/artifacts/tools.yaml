@@ -158,3 +158,18 @@ tools:
         max_pages: {type: integer, default: 5, description: "Số trang tối đa cần đọc."}
         max_chars: {type: integer, default: 8000, description: "Số ký tự tối đa trả về."}
       required: [arxiv_url]
+
+  # ---------------- New tools (team) ----------------
+  - name: hn_search
+    description: >
+      Tìm các story / thảo luận trên Hacker News (cộng đồng developer, startup) theo chủ đề.
+      DÙNG KHI: user nhắc rõ Hacker News / HN, hoặc hỏi dân developer trên HN đang bàn gì về một chủ đề.
+      KHÔNG DÙNG KHI: tin tức web chung (dùng lookup); Twitter/X (dùng timeline hoặc social_search);
+      user đã đưa một URL cụ thể (dùng fetch).
+    parameters:
+      type: object
+      properties:
+        query: {type: string, default: "", description: "CHỈ ghi chủ đề, ví dụ 'Rust', 'LLM agents'. Không thêm chữ 'Hacker News', 'HN'."}
+        sort: {type: string, enum: [relevance, date], default: "relevance", description: "date khi user muốn bài mới nhất / gần đây; relevance khi muốn bài nổi bật / hot hoặc không nói gì."}
+        limit: {type: integer, default: 5, description: "Số bài user yêu cầu (1-20), mặc định 5."}
+      required: [query]
