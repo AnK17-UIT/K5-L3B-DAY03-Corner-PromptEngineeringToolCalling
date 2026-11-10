@@ -110,13 +110,23 @@ def test_policy_instruction_like_lines_go_to_untrusted_text() -> None:
 #   2. bad / missing input from the model (empty string, wrong type, out-of-enum value)
 #   3. failure path (missing key, HTTP error, timeout) -> returns error dict, does not raise
 
-def test_my_new_tool_happy_path() -> None:
-    pytest.skip(TODO)
+def test_dedupe_preserves_first_occurrence_order() -> None:
+    assert TOOL_FUNCTIONS["dedupe_sources"]([
+        "https://example.org/b", "https://example.org/a", "https://example.org/b"
+    ]) == {"urls": ["https://example.org/b", "https://example.org/a"], "duplicate_count": 1}
 
 
-def test_my_new_tool_bad_input_from_model() -> None:
-    pytest.skip(TODO)
+def test_dedupe_empty_list_returns_empty_result() -> None:
+    assert TOOL_FUNCTIONS["dedupe_sources"]([]) == {"urls": [], "duplicate_count": 0}
 
 
-def test_my_new_tool_failure_returns_error_dict() -> None:
-    pytest.skip(TODO)
+def test_dedupe_rejects_non_string_list_input() -> None:
+    for value in (None, "https://example.org", [123]):
+        assert TOOL_FUNCTIONS["dedupe_sources"](value)["error"] == "invalid_input"
+
+
+def test_dedupe_invalid_url_returns_error_dict() -> None:
+    for url in ("", "ftp://example.org/a", "https://", "https://[broken", "https://example.org/a b"):
+        result = TOOL_FUNCTIONS["dedupe_sources"]([url])
+        assert result["error"] == "invalid_url"
+        assert "urls[0]" in result["message"]

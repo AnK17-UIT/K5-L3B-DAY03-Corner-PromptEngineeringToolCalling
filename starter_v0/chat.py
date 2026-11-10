@@ -85,6 +85,17 @@ def run_model_tool_loop(
     model: str | None,
     max_tool_rounds: int,
 ) -> dict[str, Any]:
+    allowed_tools = {tool["function"]["name"] for tool in tools}
+    explicit_handles = {
+        handle.casefold()
+        for message in messages
+        if message["role"] == "user"
+        for handle in re.findall(
+            r"(?<![\w@./-])(?:@|https?://(?:www\.)?(?:x|twitter)\.com/)([A-Za-z0-9_]{1,15})(?![\w.-])",
+            message["content"],
+            flags=re.IGNORECASE,
+        )
+    }
     working_messages = list(messages)
     rounds: list[dict[str, Any]] = []
     all_tool_events: list[dict[str, Any]] = []
@@ -113,7 +124,26 @@ def run_model_tool_loop(
 
         for call in calls:
             print(f"🔧 {call.name}({json.dumps(call.args, ensure_ascii=False, sort_keys=True)})")
-            event = execute_tool_call(call)
+            if call.name == "timeline" and str(call.args.get("screenname", "")).casefold() not in explicit_handles:
+                question = "Bạn gửi @handle hoặc URL hồ sơ X để mình kiểm tra đúng tài khoản nhé."
+                round_record["tool_results"].append({
+                    "tool": call.name,
+                    "args": call.args,
+                    "result": {"error": "handle_not_supplied", "awaiting_user": True},
+                })
+                rounds.append(round_record)
+                return {
+                    "status": "waiting_for_user",
+                    "assistant_text": question,
+                    "rounds": rounds,
+                    "tool_events": all_tool_events,
+                }
+
+            event = (
+                execute_tool_call(call)
+                if call.name in allowed_tools
+                else {"tool": call.name, "args": call.args, "result": {"error": "tool_not_available"}}
+            )
             round_record["tool_results"].append(event)
             all_tool_events.append(event)
 

@@ -43,10 +43,9 @@ tools:
 
   - name: timeline
     description: >-
-      Lấy danh sách các bài đăng (tweets) gần đây từ MỘT tài khoản X/Twitter cụ thể.
-      DÙNG KHI: Người dùng yêu cầu xem bài viết CỦA một người nổi tiếng/tài khoản rõ ràng.
-      Ánh xạ tên người dùng sang handle Twitter không chứa ký tự '@' (ví dụ: Sam Altman -> 'sama', Elon Musk -> 'elonmusk', Andrej Karpathy -> 'karpathy').
-      KHÔNG DÙNG KHI: Tìm kiếm bài viết theo chủ đề chung (dùng `social_search`) hoặc chưa biết tài khoản của ai (dùng `clarify`).
+      Kiểm tra hồ sơ theo @handle hoặc URL X người dùng cung cấp, rồi lấy bài đăng nếu được yêu cầu.
+      Với yêu cầu chỉ kiểm tra tài khoản có tồn tại, truyền verify_only=true.
+      Khi người dùng chỉ nêu tên hiển thị, gọi clarify để xin @handle hoặc URL hồ sơ.
     parameters:
       type: object
       properties:
@@ -58,6 +57,10 @@ tools:
           type: integer
           default: 5
           description: "Số lượng bài đăng tối đa cần lấy."
+        verify_only:
+          type: boolean
+          default: false
+          description: "Chỉ kiểm tra hồ sơ, không lấy bài đăng."
       required: [screenname]
 
   - name: social_search
@@ -240,22 +243,17 @@ tools:
           description: "Giới hạn ký tự tối đa."
       required: [arxiv_url]
 
-  # ---------------- Custom Group Tool (CP3 Requirement) ----------------
-  - name: trending_topics
+  # Custom group tool: local URL deduplication.
+  - name: dedupe_sources
     description: >-
-      Trích xuất các chủ đề, xu hướng công nghệ hoặc từ khóa HOT đang được quan tâm nhất hiện tại.
-      DÙNG KHI: Người dùng hỏi chung về các xu hướng công nghệ/AI mới nổi mà không đưa từ khóa cụ thể.
-      KHÔNG DÙNG KHI: Đã có từ khóa tra cứu rõ ràng.
+      Loại URL trùng nhau khỏi danh sách nguồn đã có và giữ thứ tự xuất hiện
+      đầu tiên. Dùng khi người dùng yêu cầu lọc link trùng, kể cả URL có sẵn
+      trong các lượt trước. Dùng lookup để tìm nguồn và fetch để đọc nội dung URL.
     parameters:
       type: object
       properties:
-        category:
-          type: string
-          enum: [ai, tech, science, general]
-          default: "ai"
-          description: "Lĩnh vực cần lấy xu hướng nổi bật."
-        limit:
-          type: integer
-          default: 5
-          description: "Số lượng chủ đề xu hướng tối đa trả về."
-      required: [category]
+        urls:
+          type: array
+          items: {type: string}
+          description: "Danh sách URL HTTP(S) nguyên văn, gồm cả các mục trùng để tool kiểm tra"
+      required: [urls]

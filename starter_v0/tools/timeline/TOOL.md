@@ -4,8 +4,8 @@ track: core
 kind: live_api
 provider: RapidAPI Twitter API45
 requires_env: [RAPIDAPI_KEY, RAPIDAPI_TWITTER_HOST]
-inputs: [screenname, limit]
-outputs: [items]
+inputs: [screenname, limit, verify_only]
+outputs: [items, account_status]
 side_effect: false
 ---
 # timeline

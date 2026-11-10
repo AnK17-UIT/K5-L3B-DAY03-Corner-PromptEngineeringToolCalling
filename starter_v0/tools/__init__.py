@@ -8,6 +8,7 @@ import yaml
 # Folder names are intentionally vague to match the tool names students see.
 # The imported function names are the underlying implementations (unchanged).
 from .clarify.tool import ask_user
+from .dedupe_sources.tool import dedupe_sources
 from .papers.tool import arxiv_search
 from .paper_text.tool import get_arxiv_paper_text
 from .timeline.tool import get_user_tweets
@@ -33,6 +34,7 @@ TOOL_FUNCTIONS = {
     "format": render_digest,
     "send": send_telegram,
     "policy": search_company_policy,
+    "dedupe_sources": dedupe_sources,
     "papers": arxiv_search,
     "paper_text": get_arxiv_paper_text,
     # TODO CP3 (student): register your new tool here, e.g. "my_tool": my_tool_function,

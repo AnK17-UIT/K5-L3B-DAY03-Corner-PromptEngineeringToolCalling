@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import os
+import re
 from typing import Any
 
 import requests
 
-from tools._shared import TIMEOUT, err
+from tools._shared import TIMEOUT
 
 
 def _twitter_get(path: str, params: dict[str, Any]) -> dict[str, Any]:
@@ -43,10 +44,36 @@ def _tweets_from(data: dict[str, Any], limit: int) -> list[dict[str, Any]]:
     return items[: int(limit or 5)]
 
 
-def get_user_tweets(screenname: str = "", limit: int = 5) -> dict[str, Any]:
-    try:
-        data = _twitter_get("/timeline.php", {"screenname": screenname})
-        return {"tool": "get_user_tweets", "screenname": screenname, "items": _tweets_from(data, limit)}
-    except Exception as exc:
-        return err("get_user_tweets", exc)
+def get_user_tweets(screenname: str = "", limit: int = 5, verify_only: bool = False) -> dict[str, Any]:
+    if not isinstance(screenname, str) or not re.fullmatch(r"[A-Za-z0-9_]{1,15}", screenname):
+        return {"error": "invalid_handle", "items": []}
 
+    params = {"screenname": screenname}
+    result = {"tool": "get_user_tweets", "screenname": screenname, "items": []}
+    try:
+        profile = _twitter_get("/screenname.php", params)
+    except Exception:
+        return {**result, "account_status": "unverified"}
+
+    if profile.get("status") == "notfound":
+        return {**result, "account_status": "not_found"}
+
+    actual_handle = profile.get("profile")
+    if not isinstance(actual_handle, str) or actual_handle.casefold() != screenname.casefold():
+        return {**result, "account_status": "unverified"}
+
+    result.update(
+        account_status="found",
+        screenname=actual_handle,
+        display_name=profile.get("name"),
+        profile_url=f"https://x.com/{actual_handle}",
+    )
+    if verify_only:
+        return result
+
+    try:
+        data = _twitter_get("/timeline.php", {"screenname": actual_handle})
+        result["items"] = _tweets_from(data, limit)
+    except Exception:
+        result["error"] = "timeline_unavailable"
+    return result
