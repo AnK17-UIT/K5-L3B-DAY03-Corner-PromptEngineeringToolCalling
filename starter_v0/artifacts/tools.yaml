@@ -67,7 +67,7 @@ tools:
         topic: {type: string, enum: [general, news], default: "general", description: "Dùng 'news' bất cứ khi nào user hỏi tin tức / tin mới / thời sự / chuyện gì đang xảy ra (kể cả khi gọi song song với tool khác). 'general' cho tra cứu kiến thức chung."}
         timeframe: {type: string, enum: [day, week, month, year], default: "week", description: "hôm nay / 24h qua -> day; tuần này / mấy ngày qua -> week; tháng này -> month; năm nay -> year. Giữ timeframe từ lượt trước nếu user không đổi."}
         max_results: {type: integer, default: 5, description: "Số kết quả, mặc định 5."}
-      required: [query]
+      required: [query, topic, timeframe]
 
   - name: fetch
     description: >
