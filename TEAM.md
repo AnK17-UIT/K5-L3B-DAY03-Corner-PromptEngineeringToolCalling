@@ -2,91 +2,102 @@
 
 ## Thông tin nhóm
 
-- Tên nhóm: (trưởng nhóm chốt)
+- Tên nhóm: Corner
 - Lớp: L3B
-- Repo nhóm: [AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling) (tên repo theo yêu cầu của giảng viên)
-- Nhánh nộp: `main`
-- Commit chốt: (điền sau khi merge xong)
+- Repo nhóm: [K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling) (tên repo theo yêu cầu của giảng viên)
+- Nhánh nộp: `main` · Commit chốt: (điền sau khi merge xong)
 
 ## Thành viên
 
 | STT | Họ tên | MSSV | Email | GitHub | Vai trò |
 | --: | ------ | ---- | ----- | ------ | ------- |
-|   1 | Nguyễn Hoàng Gia An | 2A202603799 | 26ai.annhg@vinuni.edu.vn | [AnK17-UIT](https://github.com/AnK17-UIT) | Chủ repo; tối ưu `tools.yaml` v2–v3 (OpenAI) |
-|   2 | Hà Lê Duy | 2A202603851 | 26ai.duyhl@vinuni.edu.vn | [duyhale95](https://github.com/duyhale95) | Vòng tối ưu v0–v7, tool `dedupe_sources`, eval nhóm, UI Streamlit |
-|   3 | Nguyễn Thiên Bảo | 2A202603861 | 26ai.baont5@vinuni.edu.vn | [Limdim1604](https://github.com/Limdim1604) | Tool `hn_search`, test challenge, v8–v10 (sửa M06) |
-|   4 | Nguyễn Đức Nhật | (bổ sung) | 26ai.nhatnd@vinuni.edu.vn | [NguyenDucNhat3006](https://github.com/NguyenDucNhat3006) | Baseline v0 + phân tích CSV, cải tiến prompt v1 (OpenAI) |
+|   1 | Nguyễn Hoàng Gia An | 2A202603799 | 26ai.annhg@vinuni.edu.vn | https://github.com/AnK17-UIT | Trưởng nhóm, viết và tổng hợp báo cáo, tích hợp tool và kiểm chứng eval |
+|   2 | Hà Lê Duy | 2A202603851 | 26ai.duyhl@vinuni.edu.vn | https://github.com/duyhale95 | Kiểm chứng eval, duyệt prompt, tool và demo Streamlit |
+|   3 | Nguyễn Thiên Bảo | 2A202603861 | 26ai.baont5@vinuni.edu.vn | https://github.com/Limdim1604 | Tool `hn_search`, test challenge, tối ưu prompt v8–v10 |
+|   4 | Nguyễn Đức Nhật | 2A202603812 | 26ai.nhatnd@vinuni.edu.vn | https://github.com/NguyenDucNhat3006 | Chạy baseline, phân tích log và nắm chính cải tiến system prompt |
 
-Mỗi thành viên có báo cáo riêng `report/team/MSSV_HoTen.md`. Phần đóng góp bên dưới chỉ ghi những gì đã có commit; mỗi người tự cập nhật mục của mình khi merge lên `main`.
 
 ## Cá nhân
 
-### Nguyễn Hoàng Gia An — 2A202603799
+Mỗi thành viên đồng thời tạo một báo cáo riêng trong `report/` theo dạng:
 
-#### Phần việc phụ trách
+```text
+report/team/MSSV_HoTen.md
+```
 
-- Tạo repo nhóm, khởi tạo danh sách thành viên.
-- Tối ưu tool declaration v2–v3 với provider `openai` trên nhánh `NguyenHoangGiaAn`, nối tiếp v0–v1 của Nhật.
+Ví dụ: `report/team/20241234_NguyenVanAn.md`.
 
-#### Đóng góp cụ thể
+## Nguyễn Hoàng Gia An - 2A202603799
 
-- Chạy thử base eval ban đầu và điền danh sách thành viên (commit `a4056bd`).
-- v2: viết lại `tools.yaml`, base eval 0.95 → **1.00** (commit `403bf26`).
-- v3: chỉnh tiếp `tools.yaml`, giữ 1.00 (commit `6f49b26`). Các run đều có 0 lỗi provider.
+### Phần việc phụ trách
 
-#### Bằng chứng
+- Trưởng nhóm, viết và tổng hợp báo cáo nhóm.
+- Tích hợp `dedupe_sources`, kiểm chứng eval nhóm và đồng bộ bằng chứng kết quả.
 
-- Nhánh `NguyenHoangGiaAn`: commit `a4056bd`, `403bf26`, `6018554`, `6f49b26` (chờ rebase lên `main`).
-- Báo cáo cá nhân: `report/team/2A202603799_NguyenHoangGiaAn.md` (đang là mẫu, An bổ sung).
+### Đóng góp cụ thể
 
-### Hà Lê Duy — 2A202603851
+- Tối ưu `tools.yaml` ở v2–v3 (base eval 0.95 → 1.00), nối tiếp v0–v1 của Nhật trên nhánh `NguyenHoangGiaAn`.
+- Với hỗ trợ Codex, sửa import tool mới và bỏ khai báo tool chưa có implementation.
+- Bổ sung 4 unit test; kiểm tra bộ eval nhóm đủ 5 single turn + 5 multi turn.
+- Chạy eval thật đạt 10/10 PASS; sửa hash và đường dẫn version log theo run JSON.
 
-#### Phần việc phụ trách
+### Bằng chứng
 
-- Phần việc phụ trách gồm các vòng đánh giá prompt, tool lọc URL, bộ eval nhóm và demo agent trên nhánh `haleduy`.
+- [Báo cáo cá nhân](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/blob/7d387d0/report/team/2A202603799_NguyenHoangGiaAn.md).
+- [v2 tools.yaml](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/commit/403bf26), [v3](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/commit/6f49b26).
+- [Run group](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/blob/7d387d0/starter_v0/runs/v3-group_B_group_openai_20261110T213547741621.json).
+- [Kiểm chứng](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/blob/7d387d0/starter_v0/analysis/verification.md): pytest 71 passed, 14 skipped; các skip thuộc challenge của tool có sẵn.
 
-#### Đóng góp cụ thể
+## Hà Lê Duy — 2A202603851
 
-- Baseline v0 và các vòng v1–v7 (OpenRouter), tool `dedupe_sources` + 3 unit test, 10 case eval nhóm (10/10), UI Streamlit, transcript live chat `v7-cp3`.
+### Phần việc phụ trách
 
-#### Bằng chứng
+- Kiểm chứng các vòng đánh giá, duyệt thay đổi prompt và mô tả công cụ, kiểm tra tool mới và thử giao diện Streamlit trên nhánh `haleduy`.
 
-- Commit trên `main`: `2154f6b`, `b016f4d`, `9cc310b`, `aec3144`, `42721a9`.
-- [Báo cáo cá nhân của Hà Lê Duy](report/team/2A202603851_HaLeDuy.md)
+### Đóng góp cụ thể
 
-### Nguyễn Thiên Bảo — 2A202603861
+- Đối chiếu baseline và các vòng v1–v7. Ở v7, kết quả đạt 19/20 và còn lỗi M06 khi agent tiếp tục gọi nguồn X sau khi người dùng chuyển sang web.
+- Chuẩn hóa thông tin tác giả trong version log và kiểm tra `dedupe_sources` cùng ba unit test.
+- Duyệt bộ eval nhóm gồm 5 ca một lượt và 5 ca nhiều lượt, đối chiếu kết quả 10/10, thử UI và kiểm tra transcript.
 
-#### Phần việc phụ trách
+### Bằng chứng
 
-- Tool mới thứ hai `hn_search` và unit test.
-- Test challenge: điền 14 unit test TODO của các tool có sẵn.
-- Tiếp tục vòng tối ưu sau v7: đo lại trên provider `openai`, tích hợp tool mới, sửa lỗi M06 (v8–v10).
+- [Báo cáo cá nhân](report/team/2A202603851_HaLeDuy.md).
+- [Prompt và run v7](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/commit/b016f4d), [tool và unit test](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/commit/9cc310b).
+- [Eval nhóm](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/commit/aec3144), [Streamlit và transcript](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/commit/42721a9).
 
-#### Đóng góp cụ thể
+## Nguyễn Thiên Bảo - 2A202603861
 
-- `hn_search` (Hacker News Algolia API) + 6 unit test; bộ case riêng `eval_new_tool_hn_search.json` (3/3 ở v10).
-- 14 test TODO cho clarify, format, send, lookup, fetch, timeline, social_search, policy. `pytest` lên **95 passed, 0 skipped** (trước đó 70 passed, 14 skipped).
-- `v7-openai-recheck` → `v8` → `v9` → `v10`: base 20/20 (chạy 2 lần), group 10/10; ghi đủ `version_log.csv` và bảng B1/B2 trong báo cáo nhóm.
-- Transcript live `v10` (hn_search → đổi sang Twitter → xin xác nhận gửi → user từ chối).
-- Nhánh thử nghiệm độc lập `nguyenthienbao`: v0–v8 với OpenAI từ starter gốc (0.65 → 1.00).
+### Phần việc phụ trách
 
-#### Bằng chứng
+- Phát triển tool mới thứ hai `hn_search` (Hacker News), hoàn thiện unit test TODO, và tiếp tục tối ưu prompt sau v7 để sửa lỗi M06 (nhánh `nguyenthienbao-main`, gộp vào `main`).
 
-- Nhánh `nguyenthienbao-main` (rebase trên `main`): test challenge `90f1b1b`, `hn_search` `116965e`, v8 `5f61ac7`, v9 `c353b4d`, v10 `fdd16e2`, transcript `00334ec`, báo cáo `0a5e5c1`.
-- [Báo cáo cá nhân của Nguyễn Thiên Bảo](report/team/2A202603861_NguyenThienBao.md)
+### Đóng góp cụ thể
 
-### Nguyễn Đức Nhật — (MSSV bổ sung)
+- Tích hợp `hn_search` qua Hacker News Algolia API (không cần key) với 6 unit test, và thêm bộ case riêng `eval_new_tool_hn_search.json` kiểm tra agent chọn tool mới (3/3).
+- Hoàn thiện 14 unit test TODO của tool có sẵn: `pytest` từ 70 passed / 14 skipped lên 95 passed, 0 skipped.
+- Đo lại v7 bằng provider `openai`, rồi chạy v8–v10: tích hợp `hn_search`, sửa M06 (nguồn đã bỏ thì bỏ luôn, đổi nguồn chỉ gọi tool mới). Kết quả v10: base 20/20 (chạy 2 lần), group 10/10.
+- Lưu transcript live v10, bổ sung Phần A/B của báo cáo nhóm cho các phần trên. Trước đó thử độc lập v0–v8 từ starter trên nhánh `nguyenthienbao` (0.65 → 1.00).
 
-#### Phần việc phụ trách
+### Bằng chứng
 
-- Chạy baseline, phân tích run và cải tiến system prompt trên nhánh `NguyenDucNhat3006`.
+- [Báo cáo cá nhân](report/team/2A202603861_NguyenThienBao.md).
+- [Unit test TODO](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/commit/90f1b1b), [tool `hn_search`](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/commit/116965e).
+- [v8](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/commit/5f61ac7), [v9](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/commit/c353b4d), [v10](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/commit/fdd16e2), [transcript v10](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/commit/00334ec).
 
-#### Đóng góp cụ thể
+## Nguyễn Đức Nhật - 2A202603812
 
-- Thử baseline với Gemini (commit `364263e`), rồi chạy baseline v0 với `openai`: 0.70 (14/20), 0 lỗi provider (commit `fbbd6db`). Xuất bảng `analysis/base_runs.csv`.
-- v1: cải tiến `system_prompt.md`, base eval 0.70 → **0.95**; xuất `analysis/v1.csv` (commit `89be98d`).
+### Phần việc phụ trách
 
-#### Bằng chứng
+- Chạy baseline, phân tích lỗi từ log và cải tiến system prompt trên nhánh `NguyenDucNhat3006`.
 
-- Nhánh `NguyenDucNhat3006`: commit `364263e`, `fbbd6db`, `89be98d` (chờ rebase lên `main`).
-- Báo cáo cá nhân: Nhật bổ sung `report/team/MSSV_NguyenDucNhat.md`.
+### Đóng góp cụ thể
+
+- Chạy và phân tích baseline v0, sau đó cập nhật log JSON để lưu bằng chứng đánh giá.
+- Chỉnh system prompt v1 để agent hỏi lại khi thiếu handle hoặc URL, xin xác nhận trước khi gửi và tách từ khóa tìm kiếm khỏi bộ lọc tin tức.
+- Chạy lại v1 sau khi chỉnh prompt và lưu run JSON cùng bảng phân tích v1.
+
+### Bằng chứng
+
+- [Baseline v0](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/commit/364263e), [cập nhật log JSON](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/commit/fbbd6db).
+- [System prompt, run JSON và bảng phân tích v1](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/commit/89be98d).

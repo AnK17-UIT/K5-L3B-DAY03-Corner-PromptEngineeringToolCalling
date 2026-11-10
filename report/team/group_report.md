@@ -4,7 +4,7 @@ Phần A hướng dẫn dùng thử agent. Phần B ghi lại kết quả đánh
 
 ## 1. Thông tin nhóm
 
-- Tên nhóm: trưởng nhóm bổ sung trong [TEAM.md](../../TEAM.md).
+- Tên nhóm: Corner
 - Thành viên và phân công: xem [TEAM.md](../../TEAM.md)
 - Provider và model: OpenRouter với `openai/gpt-4o-mini`.
 - Từ `v7-openai-recheck` đến `v10`: provider `openai` trực tiếp với cùng model `gpt-4o-mini`. Các vòng này đo lại trạng thái main bằng provider mới trước khi sửa tiếp.
