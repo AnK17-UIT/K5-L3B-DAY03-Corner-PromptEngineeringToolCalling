@@ -69,6 +69,7 @@ Lấy từ `starter_v0/artifacts/version_log.csv` và `starter_v0/runs/*.json`. 
 | v4 | `tools.yaml` | Phân biệt tin web với bài đăng theo lựa chọn nguồn gần nhất sẽ giúp M02 và M06 đạt. | 0.85 (17/20) | 0.95 (19/20) | [Run v4](../../starter_v0/runs/v4_B_base_openrouter_20261110T181658156040.json) |
 | v5 | `tools.yaml` | Khai báo rõ điều kiện sử dụng và tham số giúp R11 truyền `response_type` và giữ hành vi xác nhận của R12. | 0.95 (19/20) | 1.00 (20/20) | [Run v5](../../starter_v0/runs/v5_B_base_openrouter_20261110T182433343445.json) |
 | v6 | `system_prompt.md` | Routing theo nguồn và theo thứ tự phụ thuộc sẽ giữ kết quả base khi bỏ quy tắc ép một tool. | 1.00 (20/20) | 0.95 (19/20) | [Run v6](../../starter_v0/runs/v6_B_base_openrouter_20261110T182703574719.json) |
+| v7 | `system_prompt.md` | Tách đọc khỏi xác nhận gửi và từ chối rõ yêu cầu giải toán hoặc viết code. | 0.95 (19/20) | 0.95 (19/20) | [Run v7](../../starter_v0/runs/v7_B_base_openrouter_20261110T183204024791.json) |
 
 ### B2. Failure Analysis
 
@@ -96,6 +97,8 @@ Run `v0` qua OpenRouter với `openai/gpt-4o-mini` chấm đủ 20 ca và có 0 
 Ở `v5`, R11 gọi `clarify` với `response_type="text"`, R12 vẫn hỏi bằng `yes_no` và 19 ca từng PASS đều giữ kết quả. `tools.yaml` khai báo `response_type` là bắt buộc, nêu điều kiện sử dụng và quy ước tham số của các tool, và yêu cầu xác nhận nội dung chính xác trước khi gọi `send` với `confirmed=true`.
 
 Ở `v6`, R01 chuyển từ PASS sang FAIL vì agent hỏi xác nhận bằng `clarify(response_type="yes_no")` thay vì gọi `timeline(screenname="sama")`. R12 vẫn hỏi xác nhận gửi, R13 gọi đủ hai tool và 6/6 ca nhiều lượt vẫn đạt. Kiểm tra thủ công `actual_text` của `v5` và `v6` cho thấy R08 và R14 vẫn giải toán và viết code. Hai ca PASS trong eval vì điều kiện chấm của `no_tool` chỉ xét tool call.
+
+Ở `v7`, R01 gọi thẳng `timeline(screenname="sama")` và R12 vẫn hỏi xác nhận bằng `yes_no`. Kiểm tra `actual_text` cho thấy R08 từ chối giải tích phân và R14 từ chối viết hàm nhưng giải thích công thức Fibonacci. M06 từ PASS sang FAIL vì gọi thêm `social_search` sau khi người dùng đã chuyển sang tin web. Điểm tổng giữ ở 19/20 và số ca nhiều lượt đạt giảm xuống 5/6.
 
 ### B3. Team Eval Cases
 
