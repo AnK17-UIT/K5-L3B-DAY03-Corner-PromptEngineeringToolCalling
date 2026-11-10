@@ -1,0 +1,129 @@
+tools:
+  - name: clarify
+    description: >-
+      Hỏi lại người dùng khi thiếu thông tin bắt buộc (như tên tài khoản Twitter/X hay đường dẫn URL) 
+      hoặc yêu cầu xác nhận an toàn trước khi thực hiện hành động ghi/gửi bên ngoài (như `send`).
+      DÙNG KHI: Không thể xác định đối tượng cụ thể hoặc cần sự đồng ý Yes/No của người dùng.
+      KHÔNG DÙNG KHI: Đã có đủ thông tin hoặc câu hỏi ngoài phạm vi nghiên cứu (out-of-scope).
+    parameters:
+      type: object
+      properties:
+        question:
+          type: string
+          default: ""
+          description: "Câu hỏi ngắn gọn, đi thẳng vào vấn đề để gửi tới người dùng."
+        response_type:
+          type: string
+          enum: [text, yes_no, choice]
+          default: "text"
+          description: "'text' khi hỏi bổ sung thông tin bị thiếu (URL, handle); 'yes_no' khi xin xác nhận trước khi gửi tin nhắn; 'choice' khi đưa ra các lựa chọn."
+        options:
+          type: array
+          default: []
+          items:
+            type: string
+          description: "Danh sách các lựa chọn khi response_type là 'choice'."
+      required: [question]
+
+  - name: timeline
+    description: >-
+      Lấy danh sách các bài đăng (tweets) gần đây từ MỘT tài khoản X/Twitter cụ thể.
+      DÙNG KHI: Người dùng yêu cầu xem bài viết CỦA một người nổi tiếng/tài khoản rõ ràng.
+      Ánh xạ tên người dùng sang handle Twitter không chứa ký tự '@' (ví dụ: Sam Altman -> 'sama', Elon Musk -> 'elonmusk', Andrej Karpathy -> 'karpathy').
+      KHÔNG DÙNG KHI: Tìm kiếm bài viết theo chủ đề chung (dùng `social_search`) hoặc chưa biết tài khoản của ai (dùng `clarify`).
+    parameters:
+      type: object
+      properties:
+        screenname:
+          type: string
+          default: ""
+          description: "Tên handle Twitter/X, tuyệt đối KHÔNG bao gồm ký tự '@' (ví dụ: 'sama', 'elonmusk', 'karpathy')."
+        limit:
+          type: integer
+          default: 5
+          description: "Số lượng bài đăng tối đa cần lấy."
+      required: [screenname]
+
+  - name: social_search
+    description: >-
+      Tìm kiếm bài đăng/tweet trên X/Twitter theo TỪ KHÓA hoặc CHỦ ĐỀ.
+      DÙNG KHI: Tìm hiểu cộng đồng mạng xã hội đang thảo luận gì về một chủ đề (ví dụ: 'GPT-5', 'AI').
+      KHÔNG DÙNG KHI: Lấy bài đăng từ một tài khoản cụ thể (dùng `timeline`).
+    parameters:
+      type: object
+      properties:
+        query:
+          type: string
+          default: ""
+          description: "Từ khóa hoặc chủ đề tìm kiếm trên Twitter."
+        search_type:
+          type: string
+          enum: [Latest, Top]
+          default: "Latest"
+          description: "Đặt 'Top' khi người dùng hỏi các tweet phổ biến/nổi bật nhất; đặt 'Latest' khi cần tin mới nhất."
+        limit:
+          type: integer
+          default: 5
+          description: "Số lượng bài đăng trả về."
+      required: [query]
+
+  - name: lookup
+    description: >-
+      Tra cứu bài viết, tin tức hoặc dữ liệu chung trên internet qua công cụ tìm kiếm web.
+      DÙNG KHI: Cần tra cứu tin tức thời sự, bài báo hoặc thông tin tổng quan trên internet.
+      KHÔNG DÙNG KHI: Đã có đường dẫn URL cụ thể (dùng `fetch`) hoặc chỉ tìm bài đăng mạng xã hội (dùng `social_search`).
+    parameters:
+      type: object
+      properties:
+        query:
+          type: string
+          default: ""
+          description: "Từ khóa tìm kiếm THUẦN CHỦ ĐỀ (ví dụ: 'AI', 'robotics'). TUYỆT ĐỐI KHÔNG ghép các từ chỉ thể loại như 'news' hay 'tin tức' vào query khi đã chọn topic='news'."
+        topic:
+          type: string
+          enum: [general, news]
+          default: "general"
+          description: "BẮT BUỘC đặt 'news' khi người dùng hỏi về tin tức/thời sự; đặt 'general' cho tra cứu thông tin chung."
+        timeframe:
+          type: string
+          enum: [day, week, month, year]
+          default: "week"
+          description: "Khoảng thời gian: 'day' cho hôm nay, 'week' cho tuần này, 'month' cho tháng này."
+        max_results:
+          type: integer
+          default: 5
+          description: "Số lượng kết quả web tối đa."
+      required: [query]
+
+  - name: fetch
+    description: >-
+      Đọc và trích xuất nội dung từ MỘT địa chỉ URL web cụ thể.
+      DÙNG KHI: Đầu vào chứa đường dẫn HTTP/HTTPS hợp lệ rõ ràng.
+      KHÔNG DÙNG KHI: Người dùng nói 'bài viết này' nhưng không đưa URL (phải gọi `clarify` xin link).
+    parameters:
+      type: object
+      properties:
+        url:
+          type: string
+          default: ""
+          description: "Địa chỉ URL đầy đủ cần truy cập và đọc nội dung (ví dụ: https://openai.com/blog/gpt-5)."
+      required: [url]
+
+  - name: send
+    description: >-
+      Gửi tin nhắn hoặc bài viết lên kênh Telegram bên ngoài.
+      RANH GIỚI AN TOÀN BẮT BUỘC: CHỈ ĐƯỢC PHÉP GỌI khi người dùng ĐÃ XÁC NHẬN đồng ý (confirmed=true).
+      Ở lượt đầu tiên khi người dùng yêu cầu đăng/gửi, KHÔNG ĐƯỢC gọi `send` trực tiếp mà phải gọi `clarify` với response_type='yes_no' để xin xác nhận trước.
+    parameters:
+      type: object
+      properties:
+        text:
+          type: string
+          default: ""
+          description: "Nội dung văn bản chi tiết cần gửi."
+        confirmed:
+          type: boolean
+          default: false
+          description: "Đặt true CHỈ KHI người dùng đã duyệt xác nhận ở lượt tương tác."
+      required: [text]
+

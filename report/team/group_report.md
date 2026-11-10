@@ -144,6 +144,37 @@ Phiên `v7-cp3+p73375dfef6dd+t5193d4feb298` có 5 lượt với OpenRouter. Phi�
 
 Ba unit test kiểm tra thứ tự và số URL trùng, đầu vào sai kiểu, và URL sai cú pháp. Ca URL thiếu dấu đóng ngoặc kiểm tra lỗi từ bộ phân tích URL được trả dưới dạng error dict. Eval routing chỉ kiểm tra model chọn đúng tool và tham số.
 
+### B7. Small Local Model Challenge (bonus)
+
+Các lượt dùng cùng 20 ca trong `eval_base.json`. Snapshot prompt và YAML v3 được khôi phục từ commit `6f49b26` và đối chiếu hash với run cloud. Các artifact thí nghiệm nằm trong [artifacts/ollama](../../starter_v0/artifacts/ollama). v4 viết quy tắc routing theo thứ tự ưu tiên, còn v5 giữ nguyên prompt v4 và thu gọn YAML còn sáu công cụ. Cấu hình v5 dành cho bộ base.
+
+| Phiên bản | Model | Prompt / YAML | Số ca đạt | Routing | Args | Nhiều lượt | Lỗi provider | Minh chứng |
+|---|---|---|---:|---:|---:|---:|---:|---|
+| v3 | gpt-4o-mini (openai) | v3 / v3 | 20/20 | 100% | 100% | 100% | 0 | [Run JSON](../../starter_v0/runs/v3_B_base_openai_20261110T192215323929.json) |
+| v3-llama3.2 | llama3.2:3b (ollama) | v3 / v3 | 9/20 | 65% | 45% | 50% | 0 | [Run JSON](../../starter_v0/runs/v3-llama3.2_B_base_ollama_20261111T000026444838.json) |
+| v3-qwen3.5 | qwen3.5:2b (ollama) | v3 / v3 | 12/20 | 65% | 60% | 50% | 0 | [Run JSON](../../starter_v0/runs/v3-qwen3.5_B_base_ollama_20261111T001129392568.json) |
+| v4-local | llama3.2:3b (ollama) | v4 / v3 | 6/20 | 65% | 30% | 17% | 0 | [Run JSON](../../starter_v0/runs/v4-local_B_base_ollama_20261111T000418237860.json) |
+| v5-local | llama3.2:3b (ollama) | v4 / v5 | 5/20 | 55% | 25% | 17% | 0 | [Run JSON](../../starter_v0/runs/v5-local_B_base_ollama_20261111T000730354503.json) |
+| v5-local-cloud | gpt-4o-mini (openai) | v4 / v5 | 19/20 | 95% | 95% | 83% | 0 | [Run JSON](../../starter_v0/runs/v5-local-cloud_B_base_openai_20261111T000407893802.json) |
+
+Số ca mắc từng dạng lỗi, tính theo lời gọi thực tế. Một ca có thể xuất hiện ở nhiều cột.
+
+| Phiên bản | Gọi công cụ ngoài danh sách mong đợi | Args JSON lỗi | Thiếu toàn bộ lời gọi bắt buộc | Bỏ sót clarify | Gọi lặp hoặc gọi thừa |
+|---|---:|---:|---:|---:|---:|
+| v3 | 0 | 0 | 0 | 0 | 0 |
+| v3-llama3.2 | 5 | 0 | 0 | 3 | 7 |
+| v3-qwen3.5 | 4 | 0 | 3 | 3 | 4 |
+| v4-local | 5 | 0 | 0 | 3 | 7 |
+| v5-local | 6 | 0 | 0 | 3 | 9 |
+| v5-local-cloud | 1 | 0 | 0 | 0 | 1 |
+
+- Llama v3 gọi `social_search` khi thiếu handle (R10), gọi `format` khi thiếu URL (R11) và chọn `send` thay vì `clarify` ở R12. R05 truyền giới hạn dưới dạng chuỗi; R03, R13 và M02 ghép từ chỉ thời gian hoặc thể loại vào `lookup.query`.
+- **Quy tắc routing có thứ tự ưu tiên**. Điểm thay đổi từ 45% đến 30%. Ca mới đạt gồm không có. Ca bị tụt gồm M05, M06, R06.
+- **Thu gọn danh sách công cụ**. Điểm thay đổi từ 30% đến 25%. Ca mới đạt gồm không có. Ca bị tụt gồm R14.
+- **Kiểm tra ngược trên cloud**. Điểm thay đổi từ 100% đến 95%. Ca mới đạt gồm không có. Ca bị tụt gồm M06.
+- Cùng cấu hình v3, Qwen đạt 12/20 so với 9/20 của Llama. Cả hai có routing 65%, nhưng Qwen đạt R05 với tham số giới hạn đúng kiểu và đạt cả R08, R09, R14 không cần công cụ. Hai model đều bỏ sót `clarify` ở R10–R12. Đổi model cho kết quả tốt hơn trên bộ ca này, còn hai thay đổi prompt/YAML đã thử trên Llama đều làm điểm giảm.
+- Ở M06, OpenAI với v5 vẫn gọi thêm `social_search` sau khi người dùng chuyển sang web. Giữ cấu hình v3 cloud khi cần chất lượng base cao hơn. Qwen v3 là lựa chọn local có điểm cao nhất trong đợt thử này, nhưng các ca xác nhận và hội thoại nhiều lượt vẫn cần kiểm tra thêm. Model chạy local, còn công cụ tìm kiếm có thể gọi API bên ngoài.
+
 ## 5. Khó khăn và cách xử lý
 
 - Chạy script bằng Python hệ thống thiếu thư viện `openai`. Dùng Python trong `.venv` cho các run có số liệu trong B1.
@@ -152,7 +183,16 @@ Ba unit test kiểm tra thứ tự và số URL trùng, đầu vào sai kiểu, 
 
 ## 6. Tổng hợp đóng góp
 
-Hà Lê Duy phụ trách phần kỹ thuật trên nhánh `haleduy`. Trưởng nhóm bổ sung tên nhóm, phân công các thành viên khác và thông tin nhánh nộp. [Thông tin nhóm](../../TEAM.md) · [Báo cáo cá nhân](2A202603851_HaLeDuy.md)
+Các thành viên cùng thực hiện CP1–CP5. Kết quả dưới đây gắn với nhánh và cấu hình tương ứng.
+
+| Thành viên | Đóng góp và kết quả |
+|---|---|
+| Nguyễn Hoàng Gia An | Trưởng nhóm, viết và tổng hợp báo cáo, tích hợp và kiểm chứng `dedupe_sources`, chạy group 10/10, làm UI, ghi transcript, xác minh handle X và chạy CP7. [Báo cáo cá nhân](2A202603799_NguyenHoangGiaAn.md). |
+| Hà Lê Duy | Duyệt baseline và các vòng đến v7 trên OpenRouter, chốt 19/20 và ghi nhận lỗi M06. Kiểm tra tool lọc URL, unit test, eval nhóm 10/10 và demo Streamlit. [Báo cáo cá nhân](2A202603851_HaLeDuy.md). |
+| Nguyễn Thiên Bảo | Trên nhánh thử nghiệm riêng, v0 đạt 13/20 và v8 đạt 20/20. Trên `nguyenthienbao-main`, Bảo bổ sung `hn_search`, sáu test cho tool và 14 test TODO. Bản v10 trên OpenAI đạt 20/20 hai lần, group 10/10 và extension 3/3. Bộ extension giữ nguyên 10 ca group hiện có. [Báo cáo cá nhân](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/blob/da7b538/report/team/2A202603861_NguyenThienBao.md) · [Base v10](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/blob/da7b538/starter_v0/runs/v10_B_base_openai_20261110T223052527930.json) · [Group v10](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/blob/da7b538/starter_v0/runs/v10_B_group_openai_20261110T223122934339.json) · [Extension v10](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/blob/da7b538/starter_v0/runs/v10_B_extension_openai_20261110T223139440802.json). |
+| Nguyễn Đức Nhật | Phân tích baseline 14/20 và sửa prompt v1 đạt 19/20. Trên nhánh riêng, Nhật chuẩn hóa mô tả công cụ, tích hợp lọc URL, cập nhật eval nhóm, làm UI theo dõi lời gọi và hoàn thiện thêm unit test. [Báo cáo cá nhân](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/blob/27c9827/report/team/2A202603812_NguyenDucNhat.md) · [UI và eval](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/commit/d9af40a) · [Unit test](https://github.com/AnK17-UIT/K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling/commit/27c9827). |
+
+Chi tiết phân công và commit minh chứng nằm trong [TEAM.md](../../TEAM.md).
 
 ## 7. Hạn chế và hướng cải thiện — B6. Reflection
 
@@ -166,3 +206,6 @@ Hà Lê Duy phụ trách phần kỹ thuật trên nhánh `haleduy`. Trưởng n
 - [README của lab](../../README.md)
 - [Tài liệu chat Streamlit](https://docs.streamlit.io/develop/api-reference/chat)
 - [Streamlit AppTest](https://docs.streamlit.io/develop/api-reference/app-testing/st.testing.v1.apptest)
+
+- [Tài liệu Ollama OpenAI compatibility](https://docs.ollama.com/api/openai-compatibility) cho thử nghiệm B7.
+- [Quy định bài lab](../../RULES.md) · [Rubric](../../RUBRIC.md) · [Hướng dẫn nộp](../../SUBMISSION.md).
