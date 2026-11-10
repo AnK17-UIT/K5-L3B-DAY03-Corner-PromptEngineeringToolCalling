@@ -24,7 +24,11 @@ cd starter_v0
 .\.venv\Scripts\python.exe -m streamlit run app.py --server.address 127.0.0.1
 ```
 
-Mở [UI tại localhost](http://127.0.0.1:8501). Nhóm mở link dùng thử cho người ngoài khi demo theo [hướng dẫn của lab](../../README.md#deploy-nhanh-để-team-khác-dùng-thử-khuyến-nghị-cloudflare-tunnel).
+Để demo bằng OpenAI, đặt `DAY03_UI_PROVIDER=openai` và điền `OPENAI_API_KEY` trong `.env`.
+
+Mở [UI tại localhost](http://127.0.0.1:8501).
+
+**Link phiên demo đã kiểm tra** [Research Agent qua Cloudflare Tunnel](https://trail-sip-supplier-benchmark.trycloudflare.com). Phiên này hiện không truy cập được. Khi demo, chạy `cloudflared tunnel --url http://127.0.0.1:8501` và cập nhật A1 bằng URL mới.
 
 ### A2. Tool agent có
 

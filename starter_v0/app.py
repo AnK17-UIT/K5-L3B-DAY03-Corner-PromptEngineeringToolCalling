@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+
 import streamlit as st
 
 from chat import ARTIFACTS_DIR, run_model_tool_loop, trim_history
@@ -41,13 +43,14 @@ if question and question.strip():
                 {"role": "assistant", "content": turn["answer"]},
             ])
 
+    provider_name = os.getenv("DAY03_UI_PROVIDER", "openrouter").strip().lower()
     current = {"question": question, "answer": "", "provider_error": "", "tools": [], "tool_errors": []}
     with st.spinner("Agent đang xử lý yêu cầu…"):
         try:
             system_prompt = (ARTIFACTS_DIR / "system_prompt.md").read_text(encoding="utf-8")
             declarations = load_tool_declarations(ARTIFACTS_DIR / "tools.yaml")
             result = run_model_tool_loop(
-                provider=make_provider("openrouter"),
+                provider=make_provider(provider_name),
                 messages=[
                     {"role": "system", "content": system_prompt},
                     *trim_history(history, 5),
@@ -58,7 +61,10 @@ if question and question.strip():
                 max_tool_rounds=4,
             )
         except Exception as exc:
-            current["provider_error"] = f"Không chạy được lượt này ({type(exc).__name__}). Kiểm tra cấu hình OpenRouter và thử lại."
+            current["provider_error"] = (
+                f"Không chạy được lượt này ({type(exc).__name__}). "
+                "Kiểm tra cấu hình provider trong .env và thử lại."
+            )
         else:
             current["answer"] = result["assistant_text"] or "Agent chưa trả lời yêu cầu này."
             for event in result["tool_events"]:
