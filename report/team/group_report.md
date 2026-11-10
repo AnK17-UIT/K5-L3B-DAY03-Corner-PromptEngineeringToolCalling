@@ -62,7 +62,7 @@ Lấy từ `starter_v0/artifacts/version_log.csv` và `starter_v0/runs/*.json`. 
 
 | Version | Changed Artifact | Hypothesis | Metric Before | Metric After | Run File |
 |---|---|---|---:|---:|---|
-| v0 | baseline |  |  |  |  |
+| v0 | baseline | Đo hành vi của starter trước khi tối ưu |  | 0.70 (14/20) | [Run v0](../../starter_v0/runs/v0_B_base_openrouter_20261110T175814995429.json) |
 | v1 |  |  |  |  |  |
 | v2 |  |  |  |  |  |
 | v3 |  |  |  |  |  |
@@ -71,9 +71,16 @@ Lấy từ `starter_v0/artifacts/version_log.csv` và `starter_v0/runs/*.json`. 
 
 Lấy từ `results[*].result.failures` trong run JSON.
 
+Run `v0` qua OpenRouter với `openai/gpt-4o-mini` chấm đủ 20 ca và có 0 lỗi provider. Tỷ lệ chọn đúng tool là 80%, tỷ lệ đúng tham số là 70%, và 6/6 ca nhiều lượt đạt. Cột Fix ghi các thay đổi đề xuất cho vòng sau.
+
 | Case ID | Failure Type | Actual Tool Calls | What Failed | Fix |
 |---|---|---|---|---|
-|  |  |  |  |  |
+| `R03_web_news_routing` | `wrong_tool` | `lookup(query="AI news", topic="news", timeframe="day", max_results=5)` | Tool đúng, nhưng `query` nhận `AI news` thay vì `AI`. | Ghi rõ chủ đề tìm kiếm nằm trong `query` và loại tin nằm trong `topic`. |
+| `R08_out_of_scope` | `out_of_scope` | `send(text=...)` | Gọi tool gửi lời giải toán dù ca này yêu cầu không gọi tool. | Thêm quy tắc trả lời ngắn khi yêu cầu nằm ngoài phạm vi nghiên cứu. |
+| `R10_missing_handle` | `missing_info` | `timeline(screenname="sama")` | Tự đoán tài khoản khi người dùng chưa cung cấp handle. | Gọi `clarify(response_type="text")` để hỏi tài khoản. |
+| `R11_missing_url` | `missing_info` | `fetch(url="https://example.com/article")` | Tự điền URL thay vì hỏi người dùng. | Gọi `clarify(response_type="text")` để xin URL trước khi đọc. |
+| `R12_confirm_before_send` | `wrong_boundary` | `send(text="Bản tin này")` | Gọi `send` trước khi xác nhận. Tool trả `needs_confirmation`. | Hỏi bằng `clarify(response_type="yes_no")` và chỉ gọi `send` sau khi người dùng xác nhận nội dung. |
+| `R13_parallel_web_and_tweets` | `wrong_tool` | `lookup(query="AI news", timeframe="day", max_results=5)` và `social_search(query="AI", search_type="Latest", limit=5)` | Cả hai tool đều được gọi. `lookup` dùng sai `query` và thiếu `topic="news"`. | Tách từ khóa và bộ lọc tin tức cho nhánh web, giữ lời gọi tìm bài đăng riêng. |
 
 ### B3. Team Eval Cases
 
