@@ -102,11 +102,20 @@ Run `v0` qua OpenRouter với `openai/gpt-4o-mini` chấm đủ 20 ca và có 0 
 
 ### B3. Team Eval Cases
 
-Liệt kê đúng 10 case trong `starter_v0/data/eval_group.json` (5 single turn + 5 multi turn).
+Run nhóm `v7-cp3` đạt 10/10 với 0 lỗi provider. Bộ dữ liệu có 5 ca một lượt (`G01`–`G05`) và 5 ca nhiều lượt (`G06`–`G10`). Hai ca gọi `dedupe_sources` đều loại đúng một URL trùng. [Bộ ca nhóm](../../starter_v0/data/eval_group.json) · [Run nhóm](../../starter_v0/runs/v7-cp3_B_group_openrouter_20261110T183908965916.json)
 
 | Case ID | What It Tests | Expected Tool/Behavior | Result |
 |---|---|---|---|
-|  |  |  |  |
+| `G01_dedupe_given_urls` | Chuyển đủ danh sách nguồn, kể cả URL lặp. | `dedupe_sources` | PASS |
+| `G02_internal_policy_area` | Tra đúng kho nội bộ và giới hạn hai mục. | `policy` với `data_privacy` | PASS |
+| `G03_monthly_web_news` | Tìm ba kết quả trong một tháng. | `lookup` với `news`, `month` | PASS |
+| `G04_arxiv_recent_papers` | Sắp theo ngày nộp và lấy hai bài. | `papers` với `submittedDate` | PASS |
+| `G05_outside_research_poem` | Từ chối sáng tác ngoài phạm vi. | Trả lời không gọi tool | PASS |
+| `G06_dedupe_prior_links` | Dùng danh sách URL từ lượt trước. | `dedupe_sources` | PASS |
+| `G07_cancel_publish` | Dừng quy trình đăng theo yêu cầu hủy. | Xác nhận đã hủy và không gọi tool | PASS |
+| `G08_switch_web_to_social` | Đổi nguồn từ web sang X và giữ chủ đề. | `social_search` với `Top`, giới hạn 2 | PASS |
+| `G09_format_prior_sources` | Định dạng danh sách nguồn đã có. | `format` với `bullets` và tiêu đề đã chọn | PASS |
+| `G10_policy_area_correction` | Ưu tiên nhóm chính sách mới và giới hạn một mục. | `policy` với `source_citation` | PASS |
 
 ### B4. Live Chat Evidence
 
