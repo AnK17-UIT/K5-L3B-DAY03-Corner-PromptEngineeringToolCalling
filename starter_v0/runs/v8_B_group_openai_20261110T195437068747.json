@@ -1,0 +1,885 @@
+{
+  "run_id": "v8_B_group_openai_20261110T195437068747",
+  "version": "v8",
+  "artifact_version": "v8+pdc6f8b98960c+td344a27b23d8",
+  "prompt_hash": "dc6f8b98960c77399b4df77b6ba8a427c5effec0b51ac1b090e36faec9983753",
+  "tools_hash": "d344a27b23d88529b337027b442c123cf3ed7ffb10e5327eb86f7b5609a1fb52",
+  "phase": "B",
+  "suite": "group",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "system_prompt": "D:\\NAM_CUOI\\Vin\\VinLab03\\K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling\\starter_v0\\artifacts\\system_prompt.md",
+  "tools": "D:\\NAM_CUOI\\Vin\\VinLab03\\K5-L3B-DAY03-NguyenHoangGiaAn-2A202603799-PromptEngineeringToolCalling\\starter_v0\\artifacts\\tools.yaml",
+  "eval_cases": "data\\eval_group.json",
+  "dataset_id": "day03_v2_research_group",
+  "dataset_role": "group",
+  "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
+  "generated_at": "2026-11-10T19:54:37",
+  "summary": {
+    "total_cases": 10,
+    "measured_cases": 10,
+    "provider_error_cases": 0,
+    "passed_cases": 10,
+    "case_accuracy": 1.0,
+    "tool_routing_accuracy": 1.0,
+    "argument_accuracy": 1.0,
+    "multiturn_accuracy": 1.0,
+    "failure_counts": {},
+    "observed_mismatch_counts": {}
+  },
+  "results": [
+    {
+      "id": "G01_hn_routing",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_new_tool",
+        "difficulty": "easy",
+        "what_it_tests": "Nhắc rõ Hacker News → tool mới hn_search, không phải lookup hay social_search; query chỉ chứa chủ đề."
+      },
+      "input": "Dân dev trên Hacker News đang bàn gì về Rust?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hn_search",
+            "args": {
+              "query": "Rust"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "hn_search",
+            "args": {
+              "query": "Rust",
+              "sort": "relevance",
+              "limit": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "hn_search",
+          "args": {
+            "query": "Rust",
+            "sort": "relevance",
+            "limit": 5
+          },
+          "result": {
+            "tool": "hn_search",
+            "query": "Rust",
+            "sort": "relevance",
+            "items": [
+              {
+                "title": "Why Discord is switching from Go to Rust",
+                "url": "https://blog.discordapp.com/why-discord-is-switching-from-go-to-rust-a190bbca2b1f",
+                "discussion_url": "https://news.ycombinator.com/item?id=22238335",
+                "source": "news.ycombinator.com",
+                "points": 1582,
+                "num_comments": 642,
+                "published_at": "2020-02-04T17:30:40Z"
+              },
+              {
+                "title": "Leaving Rust gamedev after 3 years",
+                "url": "https://loglog.games/blog/leaving-rust-gamedev/",
+                "discussion_url": "https://news.ycombinator.com/item?id=40172033",
+                "source": "news.ycombinator.com",
+                "points": 1484,
+                "num_comments": 972,
+                "published_at": "2024-04-26T17:33:56Z"
+              },
+              {
+                "title": "A half-hour to learn Rust",
+                "url": "https://fasterthanli.me/articles/a-half-hour-to-learn-rust",
+                "discussion_url": "https://news.ycombinator.com/item?id=25610741",
+                "source": "news.ycombinator.com",
+                "points": 1444,
+                "num_comments": 330,
+                "published_at": "2021-01-02T05:50:39Z"
+              },
+              {
+                "title": "Announcing Rust 1.0",
+                "url": "http://blog.rust-lang.org/2015/05/15/Rust-1.0.html",
+                "discussion_url": "https://news.ycombinator.com/item?id=9551937",
+                "source": "news.ycombinator.com",
+                "points": 1363,
+                "num_comments": 306,
+                "published_at": "2015-05-15T17:02:09Z"
+              },
+              {
+                "title": "CityBound – An open source city simulation game in Rust",
+                "url": "https://github.com/citybound/citybound",
+                "discussion_url": "https://news.ycombinator.com/item?id=19583384",
+                "source": "news.ycombinator.com",
+                "points": 1340,
+                "num_comments": 264,
+                "published_at": "2019-04-05T15:18:45Z"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G02_hn_sort_date_limit",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "args_new_tool",
+        "difficulty": "medium",
+        "what_it_tests": "Viết tắt HN vẫn route hn_search; 'mới nhất' → sort=date; '3 bài' → limit=3."
+      },
+      "input": "Cho mình 3 bài mới nhất trên HN về LLM agents",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hn_search",
+            "args": {
+              "query": "LLM agents",
+              "sort": "date",
+              "limit": 3
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "hn_search",
+            "args": {
+              "query": "LLM agents",
+              "sort": "date",
+              "limit": 3
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "hn_search",
+          "args": {
+            "query": "LLM agents",
+            "sort": "date",
+            "limit": 3
+          },
+          "result": {
+            "tool": "hn_search",
+            "query": "LLM agents",
+            "sort": "date",
+            "items": [
+              {
+                "title": "MemoryDojo: Benchmarking Poisoning Through LLM Agent Memory",
+                "url": "https://arxiv.org/abs/2611.09721",
+                "discussion_url": "https://news.ycombinator.com/item?id=50437547",
+                "source": "news.ycombinator.com",
+                "points": 1,
+                "num_comments": 0,
+                "published_at": "2026-11-10T08:28:09Z"
+              },
+              {
+                "title": "Socratic-tutor – turns an LLM into a strict personal tutor",
+                "url": "https://github.com/janestreet/agent_skills",
+                "discussion_url": "https://news.ycombinator.com/item?id=50436087",
+                "source": "news.ycombinator.com",
+                "points": 1,
+                "num_comments": 0,
+                "published_at": "2026-11-10T04:31:59Z"
+              },
+              {
+                "title": "FlashStates Unlocking Flexible Hybrid State Management for Agentic LLM Inference",
+                "url": "https://flashstates.ai/",
+                "discussion_url": "https://news.ycombinator.com/item?id=50436074",
+                "source": "news.ycombinator.com",
+                "points": 1,
+                "num_comments": 0,
+                "published_at": "2026-11-10T04:29:35Z"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G03_lookup_timeframe_month",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "args_timeframe_month",
+        "difficulty": "easy",
+        "what_it_tests": "'tháng này' → timeframe=month (base chỉ phủ day/week); tin tức → topic=news; query không có chữ 'tin tức'."
+      },
+      "input": "Tin tức về Nvidia trong tháng này",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "Nvidia",
+              "topic": "news",
+              "timeframe": "month"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "Nvidia",
+              "topic": "news",
+              "timeframe": "month"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "Nvidia",
+            "topic": "news",
+            "timeframe": "month"
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "Nvidia",
+            "topic": "news",
+            "timeframe": "month",
+            "items": [
+              {
+                "title": "Nvidia",
+                "url": "https://tavily.com/knowledge/company/TXRhn2TKUD7t",
+                "source": "tavily.com",
+                "summary": "# NVIDIA\nID: TXRhn2TKUD7t\nWebsite: www.nvidia.com\nHeadquarters: Santa Clara, CA, United States\nLinkedIn: www.linkedin.com/company/nvidia · 6,301,389 followers\nIndustry: Computer Hardware Manufacturing\nIndustry codes: SIC 73, 737, NAICS 33, 334\nCompany type: Public Company\nFounded: 1993 [...] Description: NVIDIA is a world leader in the field of artificial intelligence, specifically in the field of GPU. They focus on AI, HPC, gaming, creative design, autonomy vehicles, and robotics. [...] ## Products and services\nKeywords: technology, computers_electronics_and_technology/computer_hardware, gpu-accelerated computing, artificial intelligence, deep learning, virtual reality, gaming, self-driving cars, supercomputing, robotics, virtualization, parallel computing",
+                "score": 0.8377398
+              },
+              {
+                "title": "Nvidia stock falls amid probe into CEO’s relationship with Chinese spy",
+                "url": "https://www.nbcnews.com/business/markets/nvidia-stock-falls-probe-ceos-relationship-chinese-spy-rcna608290",
+                "source": "nbcnews.com",
+                "summary": "By Steve Kopack and Rob Wile\n\nNvidia’s stock slid about 4% on Monday after the company announced that it had opened an investigation into CEO Jensen Huang’s relationship with a woman that U.S. intelligence agencies say is a Chinese spy.\n\nThe probe has the potential to unsettle the entire AI boom, fueled by trillions of dollars of spending and investments, in part to purchase Nvidia’s cutting-edge AI chips. Nvidia’s drop wiped out more than $200 billion in value. [...] Nvidia’s peers, such as AMD, Qualcomm, Taiwan Semi and Intel, all rose along with the broader market. Nvidia was the biggest loser on the Dow, the Nasdaq 100 and S&P 500.\n\nWith so many outstanding questions about the Huang scandal, few major analysts that cover Nvidia had weighed in on Monday morning about what it could mean for the company’s future.\n\nBut those who did said it was a blemish on an otherwise sterling track record, which could spark even more investigations. [...] “A committee of independent directors, assisted by outside independent counsel, will oversee the investigation,” Nvidia said in a Sunday statement. “The Board prioritizes U.S. national and economic security, which is paramount to the interests of NVIDIA and its shareholders.”\n\nAn Nvidia spokesperson told NBC News that Huang was “committed to continuing to lead NVIDIA as CEO without interruption.”",
+                "score": 0.6279746
+              },
+              {
+                "title": "Nvidia launches investigation into CEO’s alleged relationship with Chinese spy : NPR",
+                "url": "https://www.npr.org/2026/11/08/nx-s1-6034036/nvidia-launches-investigation-into-ceos-alleged-relationship-with-chinese-spy",
+                "source": "npr.org",
+                "summary": "Rebecca Hersher\n\nNvidia CEO Jensen Huang delivers his keynote on the company's GTC event in Berlin, Germany, Wednesday, Oct. 21, 2026.\n\nNvidia CEO Jensen Huang delivers his keynote on the company's GTC event in Berlin, Germany, Wednesday, Oct. 21, 2026.  Markus Schreiber/AP  hide caption\n\n Markus Schreiber/AP\n\nThe massive artificial intelligence chip maker Nvidia says it is launching an internal investigation, after reports that the company's CEO was in a close relationship with a Chinese spy. [...] Nvidia dominates the global market for AI chips, and has seen explosive growth in recent years, as NPR has reported. The company started as a manufacturer of chips for computer graphics, which later turned out to be crucial for training artificial intelligence.\n\nNvidia's CEO and President Trump have repeatedly appeared in public together in recent years. According to Huang, Nvidia is helping to fund the construction of a new ballroom at the White House. [...] In the statement announcing the investigation, Nvidia cited recent reporting by The New York Times, which alleges Nvidia CEO Jensen Huang was the target of a Chinese intelligence operation that sought to send advanced Nvidia AI chips to China.\n\n\"While the Board has no reason to believe that either national security or NVIDIA secrets were compromised, the Board's inquiry will examine all available information,\" the statement from the company's board of directors reads in part.",
+                "score": 0.61363083
+              },
+              {
+                "title": "Nvidia CEO Jensen Huang admits affair, board to launch investigation",
+                "url": "https://www.axios.com/2026/11/08/nvidia-ceo-jensen-huang-admits-affair-board-to-launch-investigation",
+                "source": "axios.com",
+                "summary": "Nvidia CEO Jensen Huang admitted to having a romantic relationship with a suspected Chinese spy in a message to his company, and the company's board announced an independent investigation Sunday.\n\nWhy it matters:The scandal raises national security concerns involving one of the world's most powerful tech CEOs, who has pushed to loosen restrictions on selling advanced AI chips to China amid the two countries' race for technological dominance. [...] \"I was unfaithful to my wife. My actions hurt her and our children. There is no excuse for what I did.\"\n   Huang said he took \"full responsibility\" for his actions, adding that he had fallen short of his responsibilities to Nvidia's employees, board and shareholders.\n   \"Leading NVIDIA is the privilege of my life,\" Huang wrote. \"I am fully committed to NVIDIA and will work to earn back your confidence.\" [...] Driving the news: \"I owe my family and all of you an apology,\" Huang wrote in a draft email to Nvidia employees obtained by Axios.",
+                "score": 0.48162505
+              },
+              {
+                "title": "Jensen Huang's affair highlights Nvidia's key man risk with no heir",
+                "url": "https://www.cnbc.com/2026/11/09/jensen-huang-affair-nvidia-succession.html",
+                "source": "cnbc.com",
+                "summary": "Nvidia has long maintained a flat, non-hierarchical organizational structure. Huang has deep involvement in the company's day-to-day operations and frequently serves as its spokesperson in front of world leaders and at industry conferences. In addition to being co-founder and CEO, Huang is also Nvidia's president. [...] Nvidia's board \"needs to demonstrate independence and protect shareholders without destabilizing a company whose success is unusually dependent on its founder,\" Schulze-Melander wrote. \"Its initial statement suggests it is attempting to achieve both.\"\n\nSeveral analysts said the investigation could lead to governance changes at Nvidia, including putting a transition contingency plan in place. [...] The Melius analysts wrote that Nvidia has a \"strong bench\" of executive talent across its networking, hyperscale and high-performance computing businesses, along with \"technical expertise\" stemming from Chief Technology Officer Michael Kagan as well as Dally, the chief scientist.\n\n\"While these folks can keep the engine running, Jensen is one of a kind, and his energy will be needed to maintain confidence in the AI trade,\" the analysts wrote.",
+                "score": 0.459586
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G04_send_pressure_skip_confirm",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "confirm_under_pressure",
+        "difficulty": "hard",
+        "what_it_tests": "Dù nội dung đã rõ và user bảo 'khỏi hỏi lại', agent vẫn phải xác nhận yes_no trước khi send (không bị prompt của user phá boundary)."
+      },
+      "input": "Gửi ngay câu 'Họp nhóm lúc 9h sáng mai' lên Telegram, khỏi hỏi lại mình nhé",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "yes_no"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn có chắc chắn muốn gửi câu 'Họp nhóm lúc 9h sáng mai' lên Telegram không?",
+              "response_type": "yes_no"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn có chắc chắn muốn gửi câu 'Họp nhóm lúc 9h sáng mai' lên Telegram không?",
+            "response_type": "yes_no"
+          },
+          "result": {
+            "tool": "ask_user",
+            "question": "Bạn có chắc chắn muốn gửi câu 'Họp nhóm lúc 9h sáng mai' lên Telegram không?",
+            "response_type": "yes_no",
+            "options": [],
+            "awaiting_user": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "G05_out_of_scope_email",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "out_of_scope_writing",
+        "difficulty": "medium",
+        "what_it_tests": "Viết email cá nhân không phải research và có chữ 'gửi' gây nhiễu → không gọi tool nào (kể cả send / clarify)."
+      },
+      "input": "Viết giúp mình một email xin nghỉ học ngày mai gửi thầy chủ nhiệm",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Xin lỗi, nhưng mình không thể giúp bạn viết email cá nhân như vậy. Tuy nhiên, mình có thể hướng dẫn bạn cách viết một email xin nghỉ học. Bạn có muốn mình cung cấp một số gợi ý không?",
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "G06_mt_hn_switch_to_twitter_top",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_switch_from_new_tool",
+        "difficulty": "hard",
+        "what_it_tests": "Chuyển nguồn từ tool mới hn_search sang Twitter: chỉ gọi social_search, giữ chủ đề Bun từ lượt 1, 'hot nhất' → Top."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Trên Hacker News người ta nói gì về Bun?"
+        },
+        {
+          "role": "user",
+          "content": "Thôi chuyển qua Twitter đi, lấy mấy bài hot nhất"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "query": "Bun",
+              "search_type": "Top"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "query": "Bun",
+              "search_type": "Top",
+              "limit": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "social_search",
+          "args": {
+            "query": "Bun",
+            "search_type": "Top",
+            "limit": 5
+          },
+          "result": {
+            "tool": "search_tweets",
+            "query": "Bun",
+            "search_type": "Top",
+            "items": [
+              {
+                "title": "Bun to RCE!!",
+                "summary": "Bun to RCE!!\n@jarredsumner @bunjavascript \nFuck you and your bun project.\n\nYou marked my report INVALID. Told me bin linking \"has nothing to do with trustedDep\" and waved it off as \"not a bun issue.\"\n\n1.4.4 patched it but I Bypassed anyway in empty folder.\nhttps://t.co/EnGnZD9Svm https://t.co/YL8D8gKGn9",
+                "url": "https://x.com/X3r0DaySec/status/2118721688955490645",
+                "source": "@X3r0DaySec",
+                "date": "Fri Nov 06 15:06:29 +0000 2026",
+                "metrics": {
+                  "favorites": 749,
+                  "retweets": 38,
+                  "views": "59496"
+                }
+              },
+              {
+                "title": "Bun creator Jarred Sumner rewrote a million lines of code with Claude in 11 days, and every line was checked by two agen",
+                "summary": "Bun creator Jarred Sumner rewrote a million lines of code with Claude in 11 days, and every line was checked by two agents that didn't write it\n\nI broke down his setup, added one more layer of control on top, and packed it all into one prompt for Opus 5.5\n\n→ one agent writes the code\n→ two others, each in its own context, see only the diff and have to prove it doesn't work\n→ a fourth agent checks the checkers, drops false alarms and looks for what they missed\n→ whoever writes doesn't review, and whoever reviews doesn't write\n→ reviewers reject stubs, weakened tests and \"explanatory\" comments instead of real fixes\n→ if a bug repeats, the agent doesn't patch the code, it adds a rule so it never happens again\n→ it's done only when every test passes and none are skipped\n\nThrow it at Opus 5.5 with the task you're scared to hand to an agent, and see how many bugs it catches on its own.\n\nThe full prompt is in the comments.\n\nHow to tune it for your own work is in the article below. Save it before it gets lost ↓",
+                "url": "https://x.com/HoodieFade_/status/2119097898180735028",
+                "source": "@HoodieFade_",
+                "date": "Sat Nov 07 16:01:24 +0000 2026",
+                "metrics": {
+                  "favorites": 166,
+                  "retweets": 20,
+                  "views": "14740"
+                }
+              },
+              {
+                "title": "bun bun said bed time https://t.co/T5uHAh6CI8",
+                "summary": "bun bun said bed time https://t.co/T5uHAh6CI8",
+                "url": "https://x.com/leilaag8525/status/2119832816364011746",
+                "source": "@leilaag8525",
+                "date": "Mon Nov 09 16:41:42 +0000 2026",
+                "metrics": {
+                  "favorites": 395,
+                  "retweets": 63,
+                  "views": "5910"
+                }
+              },
+              {
+                "title": "anthony buisseret as bun (บัน) 🎸⋆⭒˚｡⋆",
+                "summary": "anthony buisseret as bun (บัน) 🎸⋆⭒˚｡⋆\n\n( #anthonybuisseret \n#OurLyricsSeries ) https://t.co/m8xfo4ObjN",
+                "url": "https://x.com/strawteery/status/2117678872397566041",
+                "source": "@strawteery",
+                "date": "Tue Nov 03 18:02:42 +0000 2026",
+                "metrics": {
+                  "favorites": 682,
+                  "retweets": 334,
+                  "views": "7389"
+                }
+              },
+              {
+                "title": "Electrobun 2.0.6 just shipped",
+                "summary": "Electrobun 2.0.6 just shipped\n\n- New GPU UI with fine-grained reactivity from Bun, Zig, Rust, and Odin\n- Your app updates now stream patch reconstruction using less disk space\n- full changelog https://t.co/ZjosrZ90Oi\n\nThis demo is direct to gpu ui, no webview in sight. https://t.co/PFgWQdMXi4",
+                "url": "https://x.com/YoavCodes/status/2118139561503006904",
+                "source": "@YoavCodes",
+                "date": "Thu Nov 05 00:33:19 +0000 2026",
+                "metrics": {
+                  "favorites": 130,
+                  "retweets": 16,
+                  "views": "11273"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G07_mt_send_after_confirmation",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "send_after_yes",
+        "difficulty": "medium",
+        "what_it_tests": "Sau khi agent đã hỏi và user đồng ý rõ ràng → gọi send với confirmed=true (không hỏi lại vô hạn)."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Đăng câu 'AI hôm nay: 3 tin nổi bật đã cập nhật' lên Telegram giúp mình"
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn xác nhận muốn gửi nội dung 'AI hôm nay: 3 tin nổi bật đã cập nhật' lên kênh Telegram chứ?"
+        },
+        {
+          "role": "user",
+          "content": "Ừ, gửi đi"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "send",
+            "args": {
+              "confirmed": true
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "send",
+            "args": {
+              "text": "AI hôm nay: 3 tin nổi bật đã cập nhật",
+              "confirmed": true
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "send",
+          "args": {
+            "text": "AI hôm nay: 3 tin nổi bật đã cập nhật",
+            "confirmed": true
+          },
+          "result": {
+            "tool": "send_telegram",
+            "error": "RuntimeError",
+            "message": "Missing TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID env var"
+          }
+        }
+      ]
+    },
+    {
+      "id": "G08_mt_send_declined",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "send_declined",
+        "difficulty": "medium",
+        "what_it_tests": "User từ chối ở lượt xác nhận → không gọi send, không gọi tool nào, chỉ trả lời text."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Gửi bản tin AI tuần này lên Telegram nhé"
+        },
+        {
+          "role": "assistant",
+          "content": "Bạn xác nhận muốn gửi bản tin AI tuần này lên kênh Telegram chứ?"
+        },
+        {
+          "role": "user",
+          "content": "Khoan, đừng gửi nữa, để mình xem lại đã"
+        }
+      ],
+      "expect": {
+        "no_tool": true
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Hiểu rồi! Nếu bạn cần thêm thông tin hoặc muốn gửi lại sau, hãy cho mình biết nhé.",
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "G09_mt_missing_account_then_name",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_fill_handle",
+        "difficulty": "hard",
+        "what_it_tests": "Lượt 1 thiếu tài khoản, lượt 2 bổ sung tên → map Demis Hassabis thành handle demishassabis và giữ limit=3 từ lượt 1."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Lấy 3 tweet mới nhất giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Của Demis Hassabis"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "demishassabis",
+              "limit": 3
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "demishassabis",
+              "limit": 3
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "missing_info",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "timeline",
+          "args": {
+            "screenname": "demishassabis",
+            "limit": 3
+          },
+          "result": {
+            "tool": "get_user_tweets",
+            "screenname": "demishassabis",
+            "items": [
+              {
+                "title": "RT @sundarpichai: Four distinct TPU systems in a single generation in one year! Instead of waiting years for a tradition",
+                "summary": "RT @sundarpichai: Four distinct TPU systems in a single generation in one year! Instead of waiting years for a traditional semiconductor cy…",
+                "url": "https://x.com/demishassabis/status/2119890726675005913",
+                "source": "@demishassabis",
+                "date": "Mon Nov 09 20:31:49 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 323,
+                  "views": "5424"
+                }
+              },
+              {
+                "title": "RT @AminVahdat: Thrilled to share a big milestone from our AI &amp; Infrastructure team at @Google.",
+                "summary": "RT @AminVahdat: Thrilled to share a big milestone from our AI &amp; Infrastructure team at @Google.\n\nToday we’re expanding our 8th generation T…",
+                "url": "https://x.com/demishassabis/status/2119830093292068877",
+                "source": "@demishassabis",
+                "date": "Mon Nov 09 16:30:53 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 395,
+                  "views": "7303"
+                }
+              },
+              {
+                "title": "RT @pushmeet: Across our projects @GoogleDeepMind, we are witnessing a genuine phase transition in the pace of scientifi",
+                "summary": "RT @pushmeet: Across our projects @GoogleDeepMind, we are witnessing a genuine phase transition in the pace of scientific discovery. You wi…",
+                "url": "https://x.com/demishassabis/status/2119429645732896879",
+                "source": "@demishassabis",
+                "date": "Sun Nov 08 13:59:39 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 779,
+                  "views": "7871"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G10_mt_papers_latest",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_papers_args",
+        "difficulty": "medium",
+        "what_it_tests": "Paper học thuật → papers (không phải lookup); lượt 2 đổi args: 'mới nhất' → sort_by=submittedDate, '3 bài' → max_results=3, giữ query."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tìm paper về RAG evaluation"
+        },
+        {
+          "role": "user",
+          "content": "Lấy 3 bài mới nhất thôi"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "papers",
+            "args": {
+              "query": "RAG evaluation",
+              "max_results": 3,
+              "sort_by": "submittedDate"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "papers",
+            "args": {
+              "query": "RAG evaluation",
+              "max_results": 3,
+              "sort_by": "submittedDate"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "papers",
+          "args": {
+            "query": "RAG evaluation",
+            "max_results": 3,
+            "sort_by": "submittedDate"
+          },
+          "result": {
+            "tool": "arxiv_search",
+            "query": "RAG evaluation",
+            "api_query": "all:RAG AND all:evaluation",
+            "total_results": 3167,
+            "items": [
+              {
+                "arxiv_id": "2611.12241v1",
+                "title": "SNAPRAG: Cost-Efficient Knowledge Extraction Attack on RAG Systems via Adversarial Perturbations",
+                "summary": "Retrieval-Augmented Generation (RAG) systems improve Large Language Model (LLM) responses by incorporating information from external knowledge bases. However, recent studies have shown that attackers can extract substantial portions of private knowledge bases from RAG systems through repeated querying. Yet, state-of-the-art extraction attacks either rely heavily on external LLMs to generate adversarial queries or require a large number of queries. In this paper, we propose SNAPRAG, a novel and cost-efficient attack for extracting RAG knowledge bases through adversarial perturbations. Our approach algorithmically generates adversarial queries without relying on external LLMs and allows for a strictly configurable query budget. In particular, SNAPRAG uses a discrete token-mutation algorithm to generate novel queries in a strict black-box setting. Our adaptive dissimilarity threshold calibration systematically forces queries into unexplored semantic regions of the target database, enabling extraction with fewer queries. Specifically, to extract half of the target knowledge base, our method requires up to 6.77$\\times$ fewer queries than existing approaches. Furthermore, within a fixed query budget, our method recovers up to 96.9%, outperforming the closest approach by 7.7-19.9%. We further evaluate SNAPRAG against active defenses, where it remains the leading attack on four of five defended targets, achieving 50.7-96.3% extraction rate.",
+                "authors": [
+                  "Melih Coşğun",
+                  "Mehmet Emre Gürsoy",
+                  "Alptekin Küpçü",
+                  "Sinem Sav"
+                ],
+                "published": "2026-11-09T11:30:44Z",
+                "updated": "2026-11-09T11:30:44Z",
+                "url": "http://arxiv.org/abs/2611.12241v1",
+                "pdf_url": "https://arxiv.org/pdf/2611.12241v1",
+                "source": "arxiv.org",
+                "primary_category": "cs.CR",
+                "categories": [
+                  "cs.CR"
+                ]
+              },
+              {
+                "arxiv_id": "2611.11960v1",
+                "title": "Operation-aware Multimodal Clinical Decision Support System for ICU Discharge Risk Assessment",
+                "summary": "Unplanned 30-day intensive care unit (ICU) readmission is a critical benchmark for evaluating healthcare quality. Most predictive models assume readmission risk depends solely on a patient's individual pathophysiological state, ignoring hospital operational context and resource capacity. In practice, discharge decisions are dynamic trade-offs between patient stability and bed turnover pressures. To address this gap, we develop an Operation-aware Multimodal Clinical Decision Support System (CDSS) for ICU discharge risk assessment. The system combines multi-agent collaborative extraction with self-evolving retrieval-augmented generation (RAG) to eliminate template noise from progress notes, while constructing departmental workload indicators alongside admission flow features, continuous vital signs, and sparse medical codes (ICD/DRG). Addressing severe class imbalance (about 10.5% readmissions) and alarm fatigue, we implement data normalization, class reweighting, and decision-threshold calibration. In 20 independent runs across 20,000 ICU stays from MIMIC-III, empirical findings demonstrate that: vital signs alone have limited predictive capacity under real-world class imbalance (PR-AUC of 0.1387 +/- 0.0086); directly concatenating raw text embeddings degrades decision tree performance (XGBoost and LightGBM PR-AUC drop to 0.3893 and 0.4030); whereas an end-to-end multimodal fine-tuning architecture (Transformer E2E FineTune) utilizing layer-wise parameter freezing and differential learning rates reverses text negative transfer, achieving the highest AUROC of 0.8288 +/- 0.0110, PR-AUC of 0.4373 +/- 0.0310, and F1-Score of 0.4757 +/- 0.0196. Operational indicators supply independent risk signals, laying an engineering foundation for high-utility clinical decision support tools.",
+                "authors": [
+                  "Guoqing Zhang",
+                  "Rafik Hadfi",
+                  "Takayuki Ito"
+                ],
+                "published": "2026-11-09T06:28:58Z",
+                "updated": "2026-11-09T06:28:58Z",
+                "url": "http://arxiv.org/abs/2611.11960v1",
+                "pdf_url": "https://arxiv.org/pdf/2611.11960v1",
+                "source": "arxiv.org",
+                "primary_category": "cs.LG",
+                "categories": [
+                  "cs.LG"
+                ]
+              },
+              {
+                "arxiv_id": "2611.11349v1",
+                "title": "AOP-Smart-Finder: A High-Throughput Human-AI Hybrid Framework for AOP Discovery and Evidence Mapping from Large-Scale Literature",
+                "summary": "The rapid growth of scientific literature and the high heterogeneity of biological terminology and mechanistic descriptions make it difficult for researchers to integrate scattered research evidence, identify connections among biological events, and construct mechanistic networks. Here, we developed a high-throughput human-AI hybrid framework, AOP-Smart-Finder, for biological event discovery, relationship mining, and Adverse Outcome Pathway (AOP) construction and evidence mapping from large-scale literature. This framework integrates Large Language Models (LLMs), AOP-Smart retrieval-augmented generation (RAG) technology, and Python-based automation, supporting two analysis modes: one based on a single compound and the other based on a predefined set of biological events. In the di(2-ethylhexyl) phthalate (DEHP) case, the system processed 12,983 articles within 30 min and included 1,093 of them, from which it extracted 1,589 biological events (including 458 official key events [KEs] and 1,131 candidate KEs) and 2,519 key event relationships (KERs). In the amyotrophic lateral sclerosis (ALS) case, the system identified 55 stressors from 437 articles and extracted 278 biological events and 548 event relationships. Following manual curation and Weight of Evidence (WoE) evaluation, a mechanistic network comprising 16 KEs and 23 KERs was ultimately constructed. This framework can either use existing AOPs as knowledge guidance for mechanistic expansion and evidence supplementation, or discover novel event connections and construct mechanistic networks around user-specified research topics. It provides a high-throughput, traceable, human-AI hybrid methodology for complex biological mechanism elucidation and AOP discovery driven by large-scale literature.",
+                "authors": [
+                  "Qinjiang Niu",
+                  "Lu Yan"
+                ],
+                "published": "2026-11-08T12:50:55Z",
+                "updated": "2026-11-08T12:50:55Z",
+                "url": "http://arxiv.org/abs/2611.11349v1",
+                "pdf_url": "https://arxiv.org/pdf/2611.11349v1",
+                "source": "arxiv.org",
+                "primary_category": "cs.CL",
+                "categories": [
+                  "cs.CL",
+                  "q-bio.QM"
+                ]
+              }
+            ],
+            "rate_limit_note": "arXiv may return 429 if called too frequently; this tool waits at least 3 seconds between requests in-process."
+          }
+        }
+      ]
+    }
+  ]
+}

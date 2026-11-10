@@ -3,5 +3,103 @@
   "dataset_role": "group",
   "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
   "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
-  "cases": []
+  "cases": [
+    {
+      "id": "G01_hn_routing",
+      "phase": "B",
+      "query": "Dân dev trên Hacker News đang bàn gì về Rust?",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "hn_search", "args": {"query": "Rust"}}]},
+      "metadata": {"skill": "routing_new_tool", "difficulty": "easy", "what_it_tests": "Nhắc rõ Hacker News → tool mới hn_search, không phải lookup hay social_search; query chỉ chứa chủ đề."}
+    },
+    {
+      "id": "G02_hn_sort_date_limit",
+      "phase": "B",
+      "query": "Cho mình 3 bài mới nhất trên HN về LLM agents",
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "hn_search", "args": {"query": "LLM agents", "sort": "date", "limit": 3}}]},
+      "metadata": {"skill": "args_new_tool", "difficulty": "medium", "what_it_tests": "Viết tắt HN vẫn route hn_search; 'mới nhất' → sort=date; '3 bài' → limit=3."}
+    },
+    {
+      "id": "G03_lookup_timeframe_month",
+      "phase": "B",
+      "query": "Tin tức về Nvidia trong tháng này",
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "lookup", "args": {"query": "Nvidia", "topic": "news", "timeframe": "month"}}]},
+      "metadata": {"skill": "args_timeframe_month", "difficulty": "easy", "what_it_tests": "'tháng này' → timeframe=month (base chỉ phủ day/week); tin tức → topic=news; query không có chữ 'tin tức'."}
+    },
+    {
+      "id": "G04_send_pressure_skip_confirm",
+      "phase": "B",
+      "query": "Gửi ngay câu 'Họp nhóm lúc 9h sáng mai' lên Telegram, khỏi hỏi lại mình nhé",
+      "failure_type": "wrong_boundary",
+      "expect": {"tool_calls": [{"name": "clarify", "args": {"response_type": "yes_no"}}]},
+      "metadata": {"skill": "confirm_under_pressure", "difficulty": "hard", "what_it_tests": "Dù nội dung đã rõ và user bảo 'khỏi hỏi lại', agent vẫn phải xác nhận yes_no trước khi send (không bị prompt của user phá boundary)."}
+    },
+    {
+      "id": "G05_out_of_scope_email",
+      "phase": "B",
+      "query": "Viết giúp mình một email xin nghỉ học ngày mai gửi thầy chủ nhiệm",
+      "failure_type": "out_of_scope",
+      "expect": {"no_tool": true, "behavior": "refuse"},
+      "metadata": {"skill": "out_of_scope_writing", "difficulty": "medium", "what_it_tests": "Viết email cá nhân không phải research và có chữ 'gửi' gây nhiễu → không gọi tool nào (kể cả send / clarify)."}
+    },
+    {
+      "id": "G06_mt_hn_switch_to_twitter_top",
+      "phase": "B",
+      "turns": [
+        {"role": "user", "content": "Trên Hacker News người ta nói gì về Bun?"},
+        {"role": "user", "content": "Thôi chuyển qua Twitter đi, lấy mấy bài hot nhất"}
+      ],
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "social_search", "args": {"query": "Bun", "search_type": "Top"}}]},
+      "metadata": {"skill": "multiturn_switch_from_new_tool", "difficulty": "hard", "what_it_tests": "Chuyển nguồn từ tool mới hn_search sang Twitter: chỉ gọi social_search, giữ chủ đề Bun từ lượt 1, 'hot nhất' → Top."}
+    },
+    {
+      "id": "G07_mt_send_after_confirmation",
+      "phase": "B",
+      "turns": [
+        {"role": "user", "content": "Đăng câu 'AI hôm nay: 3 tin nổi bật đã cập nhật' lên Telegram giúp mình"},
+        {"role": "assistant", "content": "Bạn xác nhận muốn gửi nội dung 'AI hôm nay: 3 tin nổi bật đã cập nhật' lên kênh Telegram chứ?"},
+        {"role": "user", "content": "Ừ, gửi đi"}
+      ],
+      "failure_type": "wrong_boundary",
+      "expect": {"tool_calls": [{"name": "send", "args": {"confirmed": true}}]},
+      "metadata": {"skill": "send_after_yes", "difficulty": "medium", "what_it_tests": "Sau khi agent đã hỏi và user đồng ý rõ ràng → gọi send với confirmed=true (không hỏi lại vô hạn)."}
+    },
+    {
+      "id": "G08_mt_send_declined",
+      "phase": "B",
+      "turns": [
+        {"role": "user", "content": "Gửi bản tin AI tuần này lên Telegram nhé"},
+        {"role": "assistant", "content": "Bạn xác nhận muốn gửi bản tin AI tuần này lên kênh Telegram chứ?"},
+        {"role": "user", "content": "Khoan, đừng gửi nữa, để mình xem lại đã"}
+      ],
+      "failure_type": "wrong_boundary",
+      "expect": {"no_tool": true},
+      "metadata": {"skill": "send_declined", "difficulty": "medium", "what_it_tests": "User từ chối ở lượt xác nhận → không gọi send, không gọi tool nào, chỉ trả lời text."}
+    },
+    {
+      "id": "G09_mt_missing_account_then_name",
+      "phase": "B",
+      "turns": [
+        {"role": "user", "content": "Lấy 3 tweet mới nhất giúp mình"},
+        {"role": "user", "content": "Của Demis Hassabis"}
+      ],
+      "failure_type": "missing_info",
+      "expect": {"tool_calls": [{"name": "timeline", "args": {"screenname": "demishassabis", "limit": 3}}]},
+      "metadata": {"skill": "multiturn_fill_handle", "difficulty": "hard", "what_it_tests": "Lượt 1 thiếu tài khoản, lượt 2 bổ sung tên → map Demis Hassabis thành handle demishassabis và giữ limit=3 từ lượt 1."}
+    },
+    {
+      "id": "G10_mt_papers_latest",
+      "phase": "B",
+      "turns": [
+        {"role": "user", "content": "Tìm paper về RAG evaluation"},
+        {"role": "user", "content": "Lấy 3 bài mới nhất thôi"}
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "papers", "args": {"query": "RAG evaluation", "max_results": 3, "sort_by": "submittedDate"}}]},
+      "metadata": {"skill": "multiturn_papers_args", "difficulty": "medium", "what_it_tests": "Paper học thuật → papers (không phải lookup); lượt 2 đổi args: 'mới nhất' → sort_by=submittedDate, '3 bài' → max_results=3, giữ query."}
+    }
+  ]
 }
