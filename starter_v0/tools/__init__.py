@@ -9,6 +9,7 @@ import yaml
 # The imported function names are the underlying implementations (unchanged).
 from .clarify.tool import ask_user
 from .dedupe_sources.tool import dedupe_sources
+from .hn_search.tool import hn_search
 from .papers.tool import arxiv_search
 from .paper_text.tool import get_arxiv_paper_text
 from .timeline.tool import get_user_tweets
@@ -37,6 +38,7 @@ TOOL_FUNCTIONS = {
     "papers": arxiv_search,
     "paper_text": get_arxiv_paper_text,
     "dedupe_sources": dedupe_sources,
+    "hn_search": hn_search,
 }
 
 

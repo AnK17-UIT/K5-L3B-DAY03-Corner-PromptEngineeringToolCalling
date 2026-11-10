@@ -1,6 +1,6 @@
 """CP3: Tool Unit Test Challenge.
 
-Unit tests for every built-in tool stub plus the team's new tool (dedupe_sources).
+Unit tests for every built-in tool stub plus the team's new tools (dedupe_sources, hn_search).
 Patterns copied from test_tools_examples.py. Fixtures are in conftest.py.
 
 Rules:
@@ -23,6 +23,7 @@ fetch = TOOL_FUNCTIONS["fetch"]
 timeline = TOOL_FUNCTIONS["timeline"]
 social_search = TOOL_FUNCTIONS["social_search"]
 policy = TOOL_FUNCTIONS["policy"]
+hn_search = TOOL_FUNCTIONS["hn_search"]
 dedupe_sources = TOOL_FUNCTIONS["dedupe_sources"]
 
 
@@ -206,3 +207,76 @@ def test_dedupe_sources_returns_error_for_malformed_url() -> None:
 
     assert result == {"error": "invalid_url", "message": "urls[0] must be an HTTP(S) URL with a host."}
 
+
+# ---------------- NEW TOOL 2: hn_search (Nguyễn Thiên Bảo) ----------------
+
+def test_hn_search_happy_path_sends_query_and_maps_items(fake_http) -> None:
+    calls = fake_http(FakeResponse({"hits": [
+        {"objectID": "42", "title": "LLM agents in prod", "url": "https://blog.dev/agents",
+         "points": 120, "num_comments": 33, "created_at": "2026-11-01T00:00:00Z"},
+        {"objectID": "43", "title": "Ask HN: agents?", "url": None, "points": 5},
+    ]}))
+
+    result = hn_search(query="LLM agents", limit=2)
+
+    assert calls[0]["url"] == "https://hn.algolia.com/api/v1/search"
+    assert calls[0]["params"] == {"query": "LLM agents", "tags": "story", "hitsPerPage": 2}
+    assert result["items"][0] == {
+        "title": "LLM agents in prod",
+        "url": "https://blog.dev/agents",
+        "discussion_url": "https://news.ycombinator.com/item?id=42",
+        "source": "news.ycombinator.com",
+        "points": 120,
+        "num_comments": 33,
+        "published_at": "2026-11-01T00:00:00Z",
+    }
+    # Story without external url falls back to the HN discussion link.
+    assert result["items"][1]["url"] == "https://news.ycombinator.com/item?id=43"
+
+
+def test_hn_search_sort_date_uses_search_by_date_endpoint(fake_http) -> None:
+    calls = fake_http(FakeResponse({"hits": []}))
+
+    result = hn_search(query="Rust", sort="date")
+
+    assert calls[0]["url"] == "https://hn.algolia.com/api/v1/search_by_date"
+    assert result["sort"] == "date"
+
+
+def test_hn_search_empty_query_returns_error_without_request(fake_http) -> None:
+    calls = fake_http(FakeResponse({"hits": []}))
+
+    for bad in ["", "   ", None, 123]:
+        result = hn_search(query=bad)
+        assert result["error"] == "invalid_query"
+    assert calls == []
+
+
+def test_hn_search_bad_limit_and_sort_from_model_are_normalised(fake_http) -> None:
+    calls = fake_http(FakeResponse({"hits": []}))
+
+    hn_search(query="AI", limit="abc", sort="popular")   # wrong type + out-of-enum
+    hn_search(query="AI", limit=0)                        # below range
+    hn_search(query="AI", limit=999)                      # above range
+
+    assert calls[0]["params"]["hitsPerPage"] == 5
+    assert calls[0]["url"].endswith("/search")           # unknown sort -> relevance
+    assert calls[1]["params"]["hitsPerPage"] == 1
+    assert calls[2]["params"]["hitsPerPage"] == 20
+
+
+def test_hn_search_http_error_returns_error_dict(fake_http) -> None:
+    fake_http(FakeResponse(status_code=503))
+
+    result = hn_search(query="AI")
+
+    assert result["tool"] == "hn_search"
+    assert result["error"] == "HTTPError"
+
+
+def test_hn_search_timeout_returns_error_dict(fake_http) -> None:
+    fake_http(requests.Timeout("timed out"))
+
+    result = hn_search(query="AI")
+
+    assert result["error"] == "Timeout"
