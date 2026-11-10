@@ -30,8 +30,8 @@ tools:
     parameters:
       type: object
       properties:
-        screenname: {type: string, default: "", description: "Tên tài khoản"}
-        limit: {type: integer, default: 5, description: "Số lượng"}
+        screenname: {type: string, default: "", description: "Handle X/Twitter KHÔNG có @. Map tên người sang handle, ví dụ Sam Altman -> sama, Elon Musk -> elonmusk, Andrej Karpathy -> karpathy."}
+        limit: {type: integer, default: 5, description: "Số bài đăng user yêu cầu (ví dụ '10 tweet' -> 10). Không nói thì 5. Giữ đúng số từ lượt trước nếu user không đổi."}
       required: [screenname]
 
   - name: social_search
@@ -39,9 +39,9 @@ tools:
     parameters:
       type: object
       properties:
-        query: {type: string, default: "", description: "Từ khóa"}
-        search_type: {type: string, enum: [Latest, Top], default: "Latest", description: "Cách sắp xếp"}
-        limit: {type: integer, default: 5, description: "Số lượng"}
+        query: {type: string, default: "", description: "Chủ đề/từ khóa cần tìm, ngắn gọn, ví dụ 'GPT-5', 'OpenAI'. Không thêm chữ 'tweet', 'Twitter'."}
+        search_type: {type: string, enum: [Latest, Top], default: "Latest", description: "Top khi user muốn bài nổi bật / hot / nhiều tương tác; Latest khi muốn mới nhất hoặc không nói gì."}
+        limit: {type: integer, default: 5, description: "Số bài đăng user yêu cầu, mặc định 5."}
       required: [query]
 
   - name: lookup
@@ -49,10 +49,10 @@ tools:
     parameters:
       type: object
       properties:
-        query: {type: string, default: "", description: "Truy vấn"}
-        topic: {type: string, enum: [general, news], default: "general", description: "Phân loại"}
-        timeframe: {type: string, enum: [day, week, month, year], default: "week", description: "Khoảng thời gian"}
-        max_results: {type: integer, default: 5, description: "Số kết quả"}
+        query: {type: string, default: "", description: "CHỈ ghi chủ đề, ví dụ 'AI', 'robotics', 'OpenAI'. KHÔNG thêm các chữ như 'news', 'tin tức', 'hôm nay', 'mới nhất' vào query, vì tính thời sự đã thể hiện qua topic và timeframe."}
+        topic: {type: string, enum: [general, news], default: "general", description: "Dùng 'news' bất cứ khi nào user hỏi tin tức / tin mới / thời sự / chuyện gì đang xảy ra (kể cả khi gọi song song với tool khác). 'general' cho tra cứu kiến thức chung."}
+        timeframe: {type: string, enum: [day, week, month, year], default: "week", description: "hôm nay / 24h qua -> day; tuần này / mấy ngày qua -> week; tháng này -> month; năm nay -> year. Giữ timeframe từ lượt trước nếu user không đổi."}
+        max_results: {type: integer, default: 5, description: "Số kết quả, mặc định 5."}
       required: [query]
 
   - name: fetch
