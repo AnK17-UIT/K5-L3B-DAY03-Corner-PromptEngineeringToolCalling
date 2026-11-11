@@ -12,7 +12,7 @@
 | STT | Họ tên | MSSV | Email | GitHub | Vai trò |
 | --: | ------ | ---- | ----- | ------ | ------- |
 |   1 | Nguyễn Hoàng Gia An | 2A202603799 | 26ai.annhg@vinuni.edu.vn | https://github.com/AnK17-UIT | Trưởng nhóm, viết và tổng hợp báo cáo, tích hợp tool và kiểm chứng eval |
-|   2 | Hà Lê Duy | 2A202603851 | 26ai.duyhl@vinuni.edu.vn | https://github.com/duyhale95 | Kiểm chứng eval, duyệt prompt, tool và demo Streamlit |
+|   2 | Hà Lê Duy | 2A202603851 | 26ai.duyhl2@vinuni.edu.vn | https://github.com/duyhale95 | Kiểm chứng eval, duyệt prompt, tool và demo Streamlit |
 |   3 | Nguyễn Thiên Bảo | 2A202603861 | 26ai.baont5@vinuni.edu.vn | https://github.com/Limdim1604 | Tối ưu prompt/tool, phát triển Hacker News search, eval và demo |
 |   4 | Nguyễn Đức Nhật | 2A202603812 | 26ai.nhatnd@vinuni.edu.vn | https://github.com/NguyenDucNhat3006 | Chạy baseline, phân tích log và nắm chính cải tiến system prompt |
 
